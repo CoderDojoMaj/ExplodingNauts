@@ -1,5 +1,6 @@
 // https://cdn.shopify.com/s/files/1/0013/0623/0833/products/3728280796_1284889927_1024x1024@2x.jpg?v=1556893129
 $deafult-card-color: #aaaaaa;
+$back-color: #700;
 $explodingKitten-card-color: black;
 $attack-card-color: orange;
 $defuse-card-color: #94bc3f;
@@ -17,6 +18,13 @@ $shuffle-card-color: #7c6f4d;
 @mixin color($c) {
   border: 3px $c solid;
   color: $c;
+}
+
+@mixin image($file) {
+  background-image: url("/images/#{$file}");
+    background-size: 80%;
+    background-repeat: no-repeat; 
+	  background-position: center;
 }
 
 card {
@@ -66,10 +74,17 @@ card {
     @include color($shuffle-card-color);
   }
 
+  &.Back {
+    @include color($back-color);
+    background-color: #900;
+    @include image("BackLogo.svg");
+  }
+
   &.Cattermelon{
-      background-image: url("/images/cattermelon.png");
-      background-size: 80%;
-      background-repeat: no-repeat; 
-	  background-position: center;
+    @include image("cattermelon.png");
+  }
+
+  &.Tacocat{
+    @include image("tacocat.png");
   }
 }
