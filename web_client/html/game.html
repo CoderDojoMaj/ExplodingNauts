@@ -9,24 +9,33 @@
       href="https://fonts.googleapis.com/css?family=Josefin+Sans:300,300i,400,400i,700,700i&display=swap&subset=latin-ext"
       rel="stylesheet">
    <link rel="stylesheet" href="css/styles.css">
+   <link rel="stylesheet" href="css/game.css">
    <link rel="stylesheet" href="css/cards.css">
 </head>
 <body>
    <h1 id="username" class="subtitle"></h1>
-   <card class="ExplodingKitten">Exploding kitten</card>
-   <card class="Attack">Attack</card>
-   <card class="Defuse">Defuse</card>
-   <card class="Nope">Nope</card>
-   <card class="SeeTheFuture">See the future (x3)</card>
-   <card class="Skip">Skip</card>
-   <card class="Favor">Favor</card>
-   <card class="Shuffle">Shuffle</card>
-   <card class="RainbowCat">Rainbow cat</card>
-   <card class="HairyPotatoCat">Hairy potato cat</card>
-   <card class="Tacocat">Tacocat</card>
-   <card class="BeardCat">Beard cat</card>
-   <card class="Cattermelon">Cattermelon</card>
-   <card class="Back"></card>
+   <card class="ExplodingKitten hidden">Exploding kitten</card>
+   <card class="Attack hidden">Attack</card>
+   <card class="Defuse hidden">Defuse</card>
+   <card class="Nope hidden">Nope</card>
+   <card class="SeeTheFuture hidden">See the future (x3)</card>
+   <card class="Skip hidden">Skip</card>
+   <card class="Favor hidden">Favor</card>
+   <card class="Shuffle hidden">Shuffle</card>
+   <card class="RainbowCat hidden">Rainbow cat</card>
+   <card class="HairyPotatoCat hidden">Hairy potato cat</card>
+   <card class="Tacocat hidden">Tacocat</card>
+   <card class="BeardCat hidden">Beard cat</card>
+   <card class="Cattermelon hidden">Cattermelon</card>
+   <card class="Back hidden"></card>
+
+	<div class="deck">
+		<card class="Back fake"></card>
+		<card class="Back fake"></card>
+		<card class="Back fake"></card>
+	</div>
+
+   <div class="hand"></div>
     
    <script src="js/lib/jscookie.js"></script>
    <script src="js/game.js"></script>

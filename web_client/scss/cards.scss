@@ -39,7 +39,14 @@ card {
   text-align: center;
   background-color: #fff;
   margin: 5px;
-    
+  
+  &.hidden{
+    display: none;
+  }
+
+  &.relative{
+    position: relative;
+  }
 
   &.ExplodingKitten {
     @include color(lighten($explodingKitten-card-color,25%));

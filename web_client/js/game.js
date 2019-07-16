@@ -1,3 +1,4 @@
+//WebSocket Stuff
 console.log(getCookie('EXPLODINGNAUTS_USER'))
 
 let url = 'ws://'+document.location.host
@@ -10,6 +11,12 @@ ws.onmessage = (data) => {
 ws.onopen = () => {
 	
 }
+
+
+//Game Stuff
+let hand=[];
+let cardTypes=["ExplodingKitten","Attack","Defuse","Nope","SeeTheFuture","Skip","Favor","Shuffle","RainbowCat","HairyPotatoCat","Tacocat","BeardCat","Cattermelon"];
+let cardNames=["Exploding Kitten","Attack","Defuse","Nope","See The Future (x3)","Skip","Favor","Shuffle","Rainbow Cat","Hairy Potato Cat","Tacocat","Beard Cat","Cattermelon"];
 
 document.querySelector("#username").innerText=getCookie("EXPLODINGNAUTS_USER");
 
@@ -76,6 +83,22 @@ function dragElement(elmnt) {
 }
 
 
-for(let el of document.querySelectorAll("card")){
+function reloadHand(){
+	document.querySelector(".hand").innerHTML="";
+	for(let card of hand){
+		document.querySelector(".hand").appendChild(card);
+	}
+}
+
+for(let el of document.querySelectorAll("card:not(.fake):not(.hidden)")){
 	dragElement(el);
 }
+
+document.querySelector(".deck").onclick=() => {
+	let card=document.createElement("card");
+	let index=Math.floor(Math.random()*(cardTypes.length));
+	card.className=cardTypes[index]+" relative";
+	card.innerText=cardNames[index];
+	hand.push(card);
+	reloadHand();
+};

@@ -1,0 +1,25 @@
+$deck-top: 0;
+$deck-left: 0;
+
+.deck{
+    position: absolute;
+    top: $deck-top;
+    left: $deck-left;
+    :nth-child(1){
+        top: 10px;
+    }
+    :nth-child(2){
+        top: 5px;
+    }
+}
+
+.hand{
+    position: absolute;
+    bottom: 0;
+    padding-bottom: 20px;
+    height: 230px;
+    width: 1395px;
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
