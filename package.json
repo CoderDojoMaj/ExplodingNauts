@@ -1,0 +1,30 @@
+{
+  "name": "explodingnauts",
+  "version": "1.0.0",
+  "description": "Exploding Kittens online remake.",
+  "main": "server.js",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.4",
+    "express": "^4.16.4",
+    "file-exists": "^5.0.1",
+    "sass": "^1.22.5",
+    "ws": "^7.1.0"
+  },
+  "scripts": {
+    "start": "npm run build-css && node server.js",
+    "test": "node server.js",
+    "build-css": "sass --source-map -s compressed web_client/scss:web_client/css",
+    "watch-css": "sass --watch --source-map -s compressed web_client/scss:web_client/css"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CoderDojoMaj/ExplodingNauts.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CoderDojoMaj/ExplodingNauts/issues"
+  },
+  "homepage": "https://github.com/CoderDojoMaj/ExplodingNauts#readme"
+}

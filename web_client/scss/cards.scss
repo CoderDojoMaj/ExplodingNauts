@@ -1,0 +1,75 @@
+// https://cdn.shopify.com/s/files/1/0013/0623/0833/products/3728280796_1284889927_1024x1024@2x.jpg?v=1556893129
+$deafult-card-color: #aaaaaa;
+$explodingKitten-card-color: black;
+$attack-card-color: orange;
+$defuse-card-color: #94bc3f;
+$nope-card-color: #d92419;
+$seeTheFuture-card-color: #c82372;
+$skip-card-color: #6496bb;
+$favor-card-color: black;
+$shuffle-card-color: #7c6f4d;
+
+//html {
+//  font-family: helvetica, sans-serif;
+//  //font-weight: bold;
+//}
+
+@mixin color($c) {
+  border: 3px $c solid;
+  color: $c;
+}
+
+card {
+  //$color: $deafult-card-color;
+  display: inline-block;
+  @include color($deafult-card-color);
+  border-radius: 10px;
+  width: 150px;
+  height: 210px;
+  padding: 5px;
+  text-align: center;
+  background-color: #fff;
+  margin: 5px;
+    
+
+  &.ExplodingKitten {
+    @include color(lighten($explodingKitten-card-color,25%));
+    background-color: $explodingKitten-card-color;
+    color: white;
+  }
+
+  &.Attack {
+    @include color($attack-card-color);
+  }
+
+  &.Defuse {
+    @include color($defuse-card-color);
+  }
+
+  &.Nope {
+    @include color($nope-card-color);
+  }
+
+  &.SeeTheFuture {
+    @include color($seeTheFuture-card-color);
+  }
+  
+  &.Skip {
+    @include color($skip-card-color);
+  }
+  
+  &.Favor {
+    @include color($favor-card-color);
+  }
+  
+  &.Shuffle {
+    @include color($shuffle-card-color);
+  }
+
+  &.Cattermelon{
+      background-image: url("/images/cattermelon.png");
+      background-size: 80%;
+      background-repeat: no-repeat; 
+	  background-position: center;
+  }
+}
