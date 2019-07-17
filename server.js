@@ -77,6 +77,10 @@ app.get('/', async function (req, res) {
 app.post('/play', async function (req, res) {
     //console.log(req.body.user);
     res.cookie('EXPLODINGNAUTS_USER', req.body.user);
+    res.redirect('/game')
+});
+
+app.get('/game', async function (req, res) {
     res.sendFile(html_path + 'game.html');
 });
 
