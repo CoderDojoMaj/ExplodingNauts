@@ -9,6 +9,7 @@ $seeTheFuture-card-color: #c82372;
 $skip-card-color: #6496bb;
 $favor-card-color: black;
 $shuffle-card-color: #7c6f4d;
+$snap-color: #2cb3425e;
 
 //html {
 //  font-family: helvetica, sans-serif;
@@ -42,6 +43,10 @@ card {
   
   &.hidden{
     display: none;
+  }
+
+  &.vis_hidden{
+    visibility: hidden;
   }
 
   &.relative{
@@ -86,6 +91,11 @@ card {
     @include color($back-color);
     background-color: #900;
     @include image("BackLogo.svg");
+  }
+
+  &.Snap {
+    @include color($snap-color);
+    background-color: lighten($snap-color, 30%);
   }
 
   &.Cattermelon{

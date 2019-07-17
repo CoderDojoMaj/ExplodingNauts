@@ -13,6 +13,8 @@ ws.onopen = () => {
 }
 
 
+let handSnapCard = document.getElementById('handSnap')
+
 //Game Stuff
 let hand = [];
 let cardTypes = ["ExplodingKitten", "Attack", "Defuse", "Nope", "SeeTheFuture", "Skip", "Favor", "Shuffle", "RainbowCat", "HairyPotatoCat", "Tacocat", "BeardCat", "Cattermelon"];
@@ -48,13 +50,26 @@ function dragElement(elmnt) {
 		if (e.target === elmnt) {
 			active = true;
 		}
+
 	}
 
 	function dragEnd(e) {
-		initialX = currentX;
-		initialY = currentY;
+		if (active) {
+			let elmnt_pos = elmnt.getBoundingClientRect()
+			let hand_snap_pos = handSnapCard.getBoundingClientRect()
+			if (Math.abs(elmnt_pos.x - hand_snap_pos.x) < 100 && Math.abs(elmnt_pos.y - hand_snap_pos.y) < 100) {
+				currentX += hand_snap_pos.x - elmnt_pos.x
+				currentY += hand_snap_pos.y - elmnt_pos.y
+				setTranslate(currentX, currentY, elmnt);
+				handSnapCard.classList.add('vis_hidden')
+				//console.log(currentX, currentY)
+			}
 
-		active = false;
+			initialX = currentX;
+			initialY = currentY;
+
+			active = false;
+		}
 	}
 
 	function drag(e) {
@@ -75,11 +90,20 @@ function dragElement(elmnt) {
 
 			// TODO snap to hand & stack
 
+			let elmnt_pos = elmnt.getBoundingClientRect()
+			let hand_snap_pos = handSnapCard.getBoundingClientRect()
+			if (Math.abs(elmnt_pos.x - hand_snap_pos.x) < 100 && Math.abs(elmnt_pos.y - hand_snap_pos.y) < 100) {
+				handSnapCard.classList.remove('vis_hidden')
+			} else {
+				handSnapCard.classList.add('vis_hidden')
+			}
+
 			setTranslate(currentX, currentY, elmnt);
 		}
 	}
 
 	function setTranslate(xPos, yPos, el) {
+		console.log(xPos, yPos)
 		el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
 	}
 }
@@ -90,6 +114,7 @@ function reloadHand() {
 	for (let card of hand) {
 		document.querySelector(".hand").appendChild(card);
 	}
+	document.querySelector(".hand").appendChild(handSnapCard);
 }
 
 for (let el of document.querySelectorAll("card:not(.fake):not(.hidden)")) {
@@ -103,4 +128,5 @@ document.querySelector(".deck").onclick = () => {
 	card.innerText = cardNames[index];
 	hand.push(card);
 	reloadHand();
+	dragElement(card);
 };
