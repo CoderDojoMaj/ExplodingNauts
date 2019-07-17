@@ -1,6 +1,5 @@
 const express = require('express');
-const fileExists = require('file-exists');
-const path = require('path');
+const fs = require('fs')
 const ws = require('ws');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -21,7 +20,7 @@ app.use(cookieParser()); // for parsing cookies
 app.get('/js/:file', async function (req, res) {
     try {
         const file = js_path + req.params.file
-        const exists = await fileExists(file)
+        const exists = fs.existsSync(file)
         if (exists) res.sendFile(file);
         else res.sendStatus(404);
 
@@ -34,7 +33,7 @@ app.get('/js/:file', async function (req, res) {
 app.get('/js/lib/:file', async function (req, res) {
     try {
         const file = js_lib_path + req.params.file
-        const exists = await fileExists(file)
+        const exists = fs.existsSync(file)
         if (exists) res.sendFile(file);
         else res.sendStatus(404);
 
@@ -47,7 +46,7 @@ app.get('/js/lib/:file', async function (req, res) {
 app.get('/images/:file', async function (req, res) {
     try {
         const file = img_path + req.params.file
-        const exists = await fileExists(file)
+        const exists = fs.existsSync(file)
         if (exists) res.sendFile(file);
         else res.sendStatus(404);
 
@@ -60,7 +59,7 @@ app.get('/images/:file', async function (req, res) {
 app.get('/css/:file', async function (req, res) {
     try {
         const file = css_path + req.params.file
-        const exists = await fileExists(file)
+        const exists = fs.existsSync(file)
         if (exists) res.sendFile(file);
         else res.sendStatus(404);
 
