@@ -35,3 +35,16 @@ $deck-left: 0;
     position: absolute;
     bottom: 0;
 }
+
+.stack{
+    border: 3px dashed #fff;
+    position: relative;
+    top: 100px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 175px;
+    height: 235px;
+    overflow: visible;
+    z-index: 0;
+    padding: 0;
+}

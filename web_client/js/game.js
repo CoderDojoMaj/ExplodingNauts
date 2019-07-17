@@ -4,6 +4,7 @@ console.log(getCookie('EXPLODINGNAUTS_USER'))
 let url = 'ws://' + document.location.host
 let ws = new WebSocket(url)
 
+//Possible Message Names/Types => addCard, drawCard, explodePlayer (?)...
 ws.onmessage = (data) => {
 	console.log(data.data)
 }
@@ -14,6 +15,11 @@ ws.onopen = () => {
 
 
 let handSnapCard = document.getElementById('handSnap')
+let stackSnapCard = document.getElementById('stackSnap')
+let snapElements = [handSnapCard, stackSnapCard];
+
+let cardsInStack=[];
+let cardZIndex=3;
 
 //Game Stuff
 let hand = [];
@@ -22,7 +28,19 @@ let cardNames = ["Exploding Kitten", "Attack", "Defuse", "Nope", "See The Future
 
 document.querySelector("#username").innerText = getCookie("EXPLODINGNAUTS_USER");
 
-//From https://www.kirupa.com/html5/drag.htm
+function redrawStack(){
+	let stack=document.querySelector(".stack");
+	stack.innerHTML="";
+	let z=cardZIndex;
+	stack.appendChild(stackSnapCard);
+	for(let card of cardsInStack){
+		stack.appendChild(card);
+		card.style.zIndex=z;
+		z++;
+	}
+}
+
+//Original from https://www.kirupa.com/html5/drag.htm
 function dragElement(elmnt) {
 	let container = elmnt.parentElement;
 
@@ -56,13 +74,31 @@ function dragElement(elmnt) {
 	function dragEnd(e) {
 		if (active) {
 			let elmnt_pos = elmnt.getBoundingClientRect()
-			let hand_snap_pos = handSnapCard.getBoundingClientRect()
-			if (Math.abs(elmnt_pos.x - hand_snap_pos.x) < 100 && Math.abs(elmnt_pos.y - hand_snap_pos.y) < 100) {
-				currentX += hand_snap_pos.x - elmnt_pos.x
-				currentY += hand_snap_pos.y - elmnt_pos.y
-				setTranslate(currentX, currentY, elmnt);
-				handSnapCard.classList.add('vis_hidden')
-				//console.log(currentX, currentY)
+			let snapped=false;
+			for(let snapEl of snapElements){
+				let snap_pos = snapEl.getBoundingClientRect()
+				if (Math.abs(elmnt_pos.x - snap_pos.x) < 100 && Math.abs(elmnt_pos.y - snap_pos.y) < 100) {
+					snapped=true;
+					currentX += snap_pos.x - elmnt_pos.x
+					currentY += snap_pos.y - elmnt_pos.y
+					setTranslate(currentX, currentY, elmnt);
+					snapEl.classList.add('vis_hidden')
+					//console.log(currentX, currentY)
+
+					if(snapEl.id=="stackSnap"){
+						elmnt.style.transform = "";
+						elmnt.style.transform += "rotate("+(Math.random()-0.5)*10+"deg)";
+						elmnt.classList.remove("relative");
+						cardsInStack.push(elmnt);
+						hand.splice(hand.indexOf(elmnt),1);
+						redrawStack();
+					}
+				}
+			}
+			if(!snapped){
+				elmnt.style.transform="";
+				xOffset=0;
+				yOffset=0;
 			}
 
 			initialX = currentX;
@@ -91,11 +127,13 @@ function dragElement(elmnt) {
 			// TODO snap to hand & stack
 
 			let elmnt_pos = elmnt.getBoundingClientRect()
-			let hand_snap_pos = handSnapCard.getBoundingClientRect()
-			if (Math.abs(elmnt_pos.x - hand_snap_pos.x) < 100 && Math.abs(elmnt_pos.y - hand_snap_pos.y) < 100) {
-				handSnapCard.classList.remove('vis_hidden')
-			} else {
-				handSnapCard.classList.add('vis_hidden')
+			for(let snapEl of snapElements){
+				let snap_pos = snapEl.getBoundingClientRect()
+				if (Math.abs(elmnt_pos.x - snap_pos.x) < 100 && Math.abs(elmnt_pos.y - snap_pos.y) < 100) {
+					snapEl.classList.remove('vis_hidden')
+				} else {
+					snapEl.classList.add('vis_hidden')
+				}
 			}
 
 			setTranslate(currentX, currentY, elmnt);
@@ -103,11 +141,10 @@ function dragElement(elmnt) {
 	}
 
 	function setTranslate(xPos, yPos, el) {
-		console.log(xPos, yPos)
+		// console.log(xPos, yPos)
 		el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
 	}
 }
-
 
 function reloadHand() {
 	document.querySelector(".hand").innerHTML = "";
