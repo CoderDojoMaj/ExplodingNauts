@@ -20,8 +20,9 @@ $deck-left: 0;
     height: 230px;
     width: 1395px;
     white-space: nowrap;
-    overflow: visible;
-    // overflow-x: auto;
+    // overflow: visible;
+    overflow-x: auto;
+    overflow-y: visible;
 }
 
 #draggingCards {
@@ -47,4 +48,58 @@ $deck-left: 0;
     overflow: visible;
     z-index: 0;
     padding: 0;
+}
+
+.stackHand{
+    border: 3px dashed #0f0;
+    position: absolute;
+    top: 150px;
+    right: 10px;
+    width: 175px;
+    height: 235px;
+    overflow: visible;
+    z-index: 0;
+    padding: 0;
+}
+
+#putMultiple{
+    border-radius: 50%;
+    background: #080;
+    transform: rotate(180deg);
+    width: 50px;
+    height: 50px;
+    font-size: 30px;
+    color: #fff;
+    border: 0;
+    box-shadow: -5px -5px 10px 0 #222;
+    position: absolute;
+    outline: none;
+    top: 125px;
+    right: 170px;
+    z-index: 3000;
+}
+
+.stackHandInfo{
+    border-radius: 50%;
+    // background: #080;
+    width: 50px;
+    height: 50px;
+    font-size: 30px;
+    color: #fff;
+    border: 0;
+    box-shadow: 5px -5px 10px 0 #222;
+    text-align: center;
+    position: absolute;
+    outline: none;
+    top: 375px;
+    right: 170px;
+    z-index: 3000;
+
+    &.error{
+        background: #800;
+    }
+
+    &.correct{
+        background: #0c0;
+    }
 }

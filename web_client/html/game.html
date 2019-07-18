@@ -24,7 +24,7 @@
    <card class="Shuffle hidden">Shuffle</card>
    <card class="RainbowCat hidden">Rainbow cat</card>
    <card class="HairyPotatoCat hidden">Hairy potato cat</card>
-   <card class="Tacocat hidden">Tacocat</card>
+   <card class="TacoCat hidden">Tacocat</card>
    <card class="BeardCat hidden">Beard cat</card>
    <card class="Cattermelon hidden">Cattermelon</card>
    <card class="Back hidden"></card>
@@ -35,9 +35,13 @@
 		<card class="Back fake"></card>
 	</div>
 
-   <div class="hand"><card class="Snap vis_hidden fake" id="handSnap"></card></div>
+   <div class="hand"></div>
 
    <div class="stack"><card class="Snap vis_hidden fake" id="stackSnap"></card></div>
+   <button id="putMultiple">&#10137;</button>
+   <div class="stackHandInfo correct">&#10004;</div>
+   <div class="stackHandInfo error">&#10008;</div>
+   <div class="stackHand"><card class="Snap vis_hidden fake" id="stackHandSnap"></card></div>
     
    <script src="js/lib/jscookie.js"></script>
    <script src="js/game.js"></script>

@@ -14,16 +14,17 @@ ws.onopen = () => {
 }
 
 
-let handSnapCard = document.getElementById('handSnap')
+let stackHandSnapCard = document.getElementById('stackHandSnap')
 let stackSnapCard = document.getElementById('stackSnap')
-let snapElements = [handSnapCard, stackSnapCard];
+let snapElements = [stackHandSnapCard, stackSnapCard];
 
 let cardsInStack=[];
+let cardsInStackHand=[];
 let cardZIndex=3;
 
 //Game Stuff
 let hand = [];
-let cardTypes = ["ExplodingKitten", "Attack", "Defuse", "Nope", "SeeTheFuture", "Skip", "Favor", "Shuffle", "RainbowCat", "HairyPotatoCat", "Tacocat", "BeardCat", "Cattermelon"];
+let cardTypes = ["ExplodingKitten", "Attack", "Defuse", "Nope", "SeeTheFuture", "Skip", "Favor", "Shuffle", "RainbowCat", "HairyPotatoCat", "TacoCat", "BeardCat", "Cattermelon"];
 let cardNames = ["Exploding Kitten", "Attack", "Defuse", "Nope", "See The Future (x3)", "Skip", "Favor", "Shuffle", "Rainbow Cat", "Hairy Potato Cat", "Tacocat", "Beard Cat", "Cattermelon"];
 
 document.querySelector("#username").innerText = getCookie("EXPLODINGNAUTS_USER");
@@ -38,6 +39,47 @@ function redrawStack(){
 		card.style.zIndex=z;
 		z++;
 	}
+}
+
+function redrawStackHand(){
+	let stack=document.querySelector(".stackHand");
+	stack.innerHTML="";
+	let z=cardZIndex;
+	stack.appendChild(stackHandSnapCard);
+	for(let card of cardsInStackHand){
+		stack.appendChild(card);
+		card.style.zIndex=z;
+		z++;
+	}
+}
+
+function getStackHandInfo(){
+	let classList=[];
+	let canPush=false;
+	for(let card of cardsInStackHand){
+		classList.push(card.classList[0]);
+	}
+
+	if(classList.length==0){
+		document.querySelector(".stackHandInfo.error").style.visibility="hidden";
+		document.querySelector(".stackHandInfo.correct").style.visibility="hidden";
+	}else if(classList[0]==classList[1] && classList.length==2 && classList[0].indexOf("Cat")!=-1){
+		document.querySelector(".stackHandInfo.error").style.visibility="hidden";
+		document.querySelector(".stackHandInfo.correct").style.visibility="visible";
+		canPush=true;
+	}else if(classList[0]==classList[1] && classList[1]==classList[2] && classList.length==3 && classList[0].indexOf("Cat")!=-1){
+		document.querySelector(".stackHandInfo.error").style.visibility="hidden";
+		document.querySelector(".stackHandInfo.correct").style.visibility="visible";
+		canPush=true;
+	}else if([...new Set(classList)].length==5 && classList.length==5){
+		document.querySelector(".stackHandInfo.error").style.visibility="hidden";
+		document.querySelector(".stackHandInfo.correct").style.visibility="visible";
+		canPush=true;
+	}else{
+		document.querySelector(".stackHandInfo.error").style.visibility="visible";
+		document.querySelector(".stackHandInfo.correct").style.visibility="hidden";
+	}
+	return canPush;
 }
 
 //Original from https://www.kirupa.com/html5/drag.htm
@@ -92,6 +134,21 @@ function dragElement(elmnt) {
 						cardsInStack.push(elmnt);
 						hand.splice(hand.indexOf(elmnt),1);
 						redrawStack();
+					}else if(snapEl.id=="stackHandSnap"){
+						elmnt.style.transform = "";
+						elmnt.style.transform += "rotate("+(Math.random()-0.5)*10+"deg)";
+						elmnt.classList.remove("relative");
+						cardsInStackHand.push(elmnt);
+						hand.splice(hand.indexOf(elmnt),1);
+						redrawStackHand();
+						let canPush=getStackHandInfo();
+						if(canPush){
+							document.querySelector("#putMultiple").onclick=pushToStack;
+						}else{
+							xOffset=0;
+							yOffset=0;
+							document.querySelector("#putMultiple").onclick=pushToHand;
+						}
 					}
 				}
 			}
@@ -100,6 +157,8 @@ function dragElement(elmnt) {
 				xOffset=0;
 				yOffset=0;
 			}
+
+			document.querySelector(".hand").style.overflowX = "auto";
 
 			initialX = currentX;
 			initialY = currentY;
@@ -123,6 +182,8 @@ function dragElement(elmnt) {
 
 			xOffset = currentX;
 			yOffset = currentY;
+
+			document.querySelector(".hand").style.overflowX = "visible";
 
 			// TODO snap to hand & stack
 
@@ -151,7 +212,6 @@ function reloadHand() {
 	for (let card of hand) {
 		document.querySelector(".hand").appendChild(card);
 	}
-	document.querySelector(".hand").appendChild(handSnapCard);
 }
 
 for (let el of document.querySelectorAll("card:not(.fake):not(.hidden)")) {
@@ -167,3 +227,27 @@ document.querySelector(".deck").onclick = () => {
 	reloadHand();
 	dragElement(card);
 };
+
+document.querySelector("#putMultiple").onclick = pushToStack;
+function pushToStack(){
+	cardsInStack=cardsInStack.concat(cardsInStackHand);
+	cardsInStackHand=[];
+	redrawStackHand();
+	redrawStack();
+	getStackHandInfo();
+};
+
+function pushToHand(){
+	for(let card of cardsInStackHand){
+		card.style.transform="";
+		card.classList.add("relative");
+	}
+	hand=hand.concat(cardsInStackHand);
+	cardsInStackHand=[];
+	redrawStackHand();
+	reloadHand();
+	getStackHandInfo();
+};
+
+document.querySelector(".stackHandInfo.error").style.visibility="hidden";
+document.querySelector(".stackHandInfo.correct").style.visibility="hidden";
