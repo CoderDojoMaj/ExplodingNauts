@@ -22,6 +22,8 @@ let cardsInStack=[];
 let cardsInStackHand=[];
 let cardZIndex=3;
 
+let handScrollPos=0, maxHandScrollPos=0;
+
 //Game Stuff
 let hand = [];
 let cardTypes = ["ExplodingKitten", "Attack", "Defuse", "Nope", "SeeTheFuture", "Skip", "Favor", "Shuffle", "RainbowCat", "HairyPotatoCat", "TacoCat", "BeardCat", "Cattermelon"];
@@ -157,7 +159,7 @@ function dragElement(elmnt) {
 				yOffset=0;
 			}
 
-			document.querySelector(".hand").style.overflowX = "auto";
+			// document.querySelector(".hand").style.overflowX = "auto";
 
 			initialX = currentX;
 			initialY = currentY;
@@ -182,7 +184,7 @@ function dragElement(elmnt) {
 			xOffset = currentX;
 			yOffset = currentY;
 
-			document.querySelector(".hand").style.overflowX = "visible";
+			// document.querySelector(".hand").style.overflowX = "visible";
 
 			// TODO snap to hand & stack
 
@@ -211,6 +213,10 @@ function reloadHand() {
 	for (let card of hand) {
 		document.querySelector(".hand").appendChild(card);
 	}
+	let fakeCard = document.createElement("card");
+	fakeCard.className = "Back fake vis_hidden relative";
+	fakeCard.innerText = cardNames[0];
+	document.querySelector(".hand").appendChild(fakeCard);
 }
 
 for (let el of document.querySelectorAll("card:not(.fake):not(.hidden)")) {
@@ -247,6 +253,27 @@ function pushToHand(){
 	reloadHand();
 	getStackHandInfo();
 };
+
+function isOffscreen(elmnt){
+	let pos=elmnt.getBoundingClientRect();
+	return pos.x+pos.width<0 || pos.y+pos.height<0 || pos.x>window.innerWidth || pos.y>window.innerHeight;
+}
+
+document.querySelector(".hand").onmousewheel = (e) => {
+	if(isOffscreen(document.querySelector(".hand").lastChild)){
+		handScrollPos+=e.deltaY/5;
+	}else if(e.deltaY>0){
+		handScrollPos+=e.deltaY/5;
+	}
+	let lastChildPos=document.querySelector(".hand").lastChild.getBoundingClientRect();
+	if(handScrollPos>0)
+		handScrollPos=0
+	// if(handScrollPos<-(lastChildPos.x+lastChildPos.width)){
+	// 	handScrollPos=-(lastChildPos.x+lastChildPos.width);
+	// }
+	document.querySelector(".hand").style.left=handScrollPos+"px";
+	console.log(e.deltaY)
+}
 
 document.querySelector(".stackHandInfo.error").style.visibility="hidden";
 document.querySelector(".stackHandInfo.correct").style.visibility="hidden";

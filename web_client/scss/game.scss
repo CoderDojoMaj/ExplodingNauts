@@ -20,9 +20,9 @@ $deck-left: 0;
     height: 230px;
     width: 1395px;
     white-space: nowrap;
-    // overflow: visible;
-    overflow-x: auto;
-    overflow-y: visible;
+    overflow: visible;
+    // overflow-x: auto;
+    // overflow-y: visible;
 }
 
 #draggingCards {
