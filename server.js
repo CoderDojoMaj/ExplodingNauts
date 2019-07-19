@@ -88,6 +88,11 @@ let server = require('http').createServer(app);
 let websocketServer = new ws.Server({server});
 
 let connections = {}
+let deck=[];
+let turn=0;
+let turnOrder=0;
+let startTimer=30;
+let timerStarted=false;
 
 websocketServer.on('connection', ws => {
     let user;
@@ -103,11 +108,25 @@ websocketServer.on('connection', ws => {
                 }
                 connections[data] = ws
                 user = data;
+                generateDeck(Date.now());
+                deck[0]=4;
+                timerStarted=true;
                 break;
             case 'ADD_CARDS':
                 for(let username in connections) {
-                        connections[username].send(`ADD_CARDS\0${data}`)
+                    connections[username].send(`ADD_CARDS\0${data}`)
                 }
+                break;
+            case 'DRAW_CARD':
+                connections[user].send(`DRAW_CARD\0${deck[turn]}`)
+                turn++;
+                break;
+            case 'REQ_SEETHEFUTURE':
+                let list=[];
+                for(let i=turn;i<turn+parseInt(data);i++){
+                    list.push(deck[i])
+                }
+                connections[user].send(`ANS_SEETHEFUTURE\0${JSON.stringify(list)}`)
                 break;
         }
     });
@@ -119,8 +138,24 @@ websocketServer.on('connection', ws => {
             }
         }
     });
+
+    // let timer=setInterval(() => {
+    //     if(timerStarted && startTimer>0){
+    //         startTimer-=1;
+    //         connections[user].send(`STARTING_TIME\0${Math.floor(startTimer)}`)
+    //     }
+    //     if(startTimer<=0){
+    //         clearInterval(this);
+    //     }
+    // },1000)
 });
 
+function generateDeck(seed){
+    Math.seed=seed;
+    for(let c=0;c<Math.seededRandom(30,45);c++){
+        deck.push(Math.floor(Math.seededRandom(-1,12)));
+    }
+}
 
 server.listen(8080, function () {
     console.log('listening on *:' + 8080);
@@ -130,3 +165,13 @@ server.listen(8080, function () {
 /*let server = app.listen(8080, function () {
     console.log('listening on *:' + 8080);
 });*/
+
+Math.seededRandom = function(max, min) {
+    max = max || 1;
+    min = min || 0;
+ 
+    Math.seed = (Math.seed * 9301 + 49297) % 233280;
+    var rnd = Math.seed / 233280;
+ 
+    return min + rnd * (max - min);
+}

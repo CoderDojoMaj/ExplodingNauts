@@ -12,9 +12,10 @@ ws.onmessage = (data) => {
 	switch(sMessage[1].toUpperCase()){
 		case 'ADD_CARDS':
 			let arr = JSON.parse(messageData);
+			console.log(arr)
 			let cardArr = []
 			for(let className of arr){
-				let card = document.querySelector("."+className+".template");
+				let card = document.querySelector("."+className+".template").cloneNode(true);
 				card.classList.remove("hidden")
 				card.style.transform += "rotate("+(Math.random()-0.5)*20+"deg)";
 				cardArr.push(card);
@@ -22,6 +23,42 @@ ws.onmessage = (data) => {
 			console.log(cardArr)
 			cardsInStack=cardsInStack.concat(cardArr)
 			redrawStack()
+			if(arr.length==1 && arr[0]=="SeeTheFuture"){
+				ws.send("REQ_SEETHEFUTURE\0 3");
+			}
+			break;
+		// case 'STARTING_TIME':
+		// 	document.getElementById("timer").innerText=messageData;
+		// 	break;
+		case "DRAW_CARD":
+			let card = document.querySelector("."+cardTypes[parseInt(messageData)]+".template").cloneNode(true);
+			card.classList.remove("hidden");
+			card.classList.add("relative");
+			hand.unshift(card);
+			reloadHand();
+			dragElement(card)
+			break;
+		case "ANS_SEETHEFUTURE":
+			let answer = JSON.parse(messageData);
+			let cardList=[];
+			//Modify class adding/substracting if there's a better way
+			for(let node of document.querySelectorAll("body>*:not(.template)")){
+				if(node.id.substring(0,3)!="stf")
+					node.classList.add("darken");
+			}
+			let cardNum=1;
+			for(let card of answer){
+				let actual = document.querySelector("."+cardTypes[parseInt(card)]+".template").cloneNode(true);
+				actual.classList.remove("hidden");
+				actual.classList.add("fake");
+				actual.id=`stf_card${cardNum}`
+				cardList.push(actual);
+				cardNum++;
+			}
+			document.getElementById("stf_card1").outerHTML=cardList[0].outerHTML;
+			document.getElementById("stf_card2").outerHTML=cardList[1].outerHTML;
+			document.getElementById("stf_card3").outerHTML=cardList[2].outerHTML;
+			document.getElementById("stf_modal").classList.remove("hidden");
 			break;
 	}
 }
@@ -242,15 +279,17 @@ function reloadHand() {
 		document.querySelector(".hand").appendChild(card);
 		lastCard = card;
 	}
-	let pos=lastCard.getBoundingClientRect();
-	let style = window.getComputedStyle ? getComputedStyle(lastCard) : lastCard.currentStyle;
-	handWidth=(pos.width+(parseInt(style.marginLeft || 0))*2)*hand.length;
-	//Make scroll bar visible/invisible and resize itself
-	if(isOffscreen(lastCard)){
-		scrollRect.classList.remove('vis_hidden')
-		scrollRect.style.width = window.innerWidth*100/handWidth+"vw"
-	}else{
-		scrollRect.classList.add('vis_hidden')
+	if(lastCard){
+		let pos=lastCard.getBoundingClientRect();
+		let style = window.getComputedStyle ? getComputedStyle(lastCard) : lastCard.currentStyle;
+		handWidth=(pos.width+(parseInt(style.marginLeft || 0))*2)*hand.length;
+		//Make scroll bar visible/invisible and resize itself
+		if(isOffscreen(lastCard)){
+			scrollRect.classList.remove('vis_hidden')
+			scrollRect.style.width = window.innerWidth*100/handWidth+"vw"
+		}else{
+			scrollRect.classList.add('vis_hidden')
+		}
 	}
 }
 
@@ -259,13 +298,22 @@ for (let el of document.querySelectorAll("card:not(.fake):not(.hidden)")) {
 }
 
 document.querySelector(".deck").onclick = () => {
-	let card = document.createElement("card");
-	let index = Math.floor(Math.random() * (cardTypes.length));
-	card.className = cardTypes[index] + " relative";
-	card.innerText = cardNames[index];
-	hand.unshift(card); // Puts the card a the start, so that you see it when you draw it
-	reloadHand();
-	dragElement(card);
+	// let card = document.createElement("card");
+	// let index = Math.floor(Math.random() * (cardTypes.length));
+	// card.className = cardTypes[index] + " relative";
+	// card.innerText = cardNames[index];
+	// hand.unshift(card); // Puts the card at the start, so that you see it when you draw it
+	// reloadHand();
+	// dragElement(card);
+	ws.send("DRAW_CARD\0 ");
+};
+
+document.querySelector("#stf_ok").onclick = () => {
+	for(let node of document.querySelectorAll("body>*:not(.template)")){
+		if(node.id.substring(0,3)!="stf")
+			node.classList.remove("darken");
+	}
+	document.getElementById("stf_modal").classList.add("hidden")
 };
 
 document.querySelector("#putMultiple").onclick = pushToStack;
