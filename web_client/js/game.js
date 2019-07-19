@@ -151,6 +151,8 @@ function dragElement(elmnt) {
 							document.querySelector("#putMultiple").onclick=pushToHand;
 						}
 					}
+					handScrollPos+=document.querySelector(".hand").lastChild.getBoundingClientRect().width;
+					handScroll({deltaY:0});
 				}
 			}
 			if(!snapped){
@@ -259,15 +261,21 @@ function isOffscreen(elmnt){
 	return pos.x+pos.width<0 || pos.y+pos.height<0 || pos.x>window.innerWidth || pos.y>window.innerHeight;
 }
 
-document.querySelector(".hand").onmousewheel = (e) => {
+document.querySelector(".hand").onmousewheel = handScroll;
+
+function handScroll(e){
 	if(isOffscreen(document.querySelector(".hand").lastChild)){
 		handScrollPos+=e.deltaY/5;
 	}else if(e.deltaY>0){
 		handScrollPos+=e.deltaY/5;
 	}
 	let lastChildPos=document.querySelector(".hand").lastChild.getBoundingClientRect();
-	if(handScrollPos>0)
+	if(handScrollPos>0){
 		handScrollPos=0
+	}
+	if(handScrollPos<-lastChildPos.x){
+		handScrollPos=-lastChildPos.x
+	}
 	// if(handScrollPos<-(lastChildPos.x+lastChildPos.width)){
 	// 	handScrollPos=-(lastChildPos.x+lastChildPos.width);
 	// }
