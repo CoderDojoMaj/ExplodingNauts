@@ -13,6 +13,8 @@ ws.onopen = () => {
 
 }
 
+//Game Stuff
+let scrollRect = document.getElementById('scrollRect')
 
 let stackHandSnapCard = document.getElementById('stackHandSnap')
 let stackSnapCard = document.getElementById('stackSnap')
@@ -22,9 +24,8 @@ let cardsInStack=[];
 let cardsInStackHand=[];
 let cardZIndex=3;
 
-let handScrollPos=0, maxHandScrollPos=0;
+let handScrollPos=0, maxHandScrollPos=0, handWidth=0;
 
-//Game Stuff
 let hand = [];
 let cardTypes = ["ExplodingKitten", "Attack", "Defuse", "Nope", "SeeTheFuture", "Skip", "Favor", "Shuffle", "RainbowCat", "HairyPotatoCat", "TacoCat", "BeardCat", "Cattermelon"];
 let cardNames = ["Exploding Kitten", "Attack", "Defuse", "Nope", "See The Future (x3)", "Skip", "Favor", "Shuffle", "Rainbow Cat", "Hairy Potato Cat", "Tacocat", "Beard Cat", "Cattermelon"];
@@ -130,14 +131,14 @@ function dragElement(elmnt) {
 
 					if(snapEl.id=="stackSnap"){
 						elmnt.style.transform = "";
-						elmnt.style.transform += "rotate("+(Math.random()-0.5)*10+"deg)";
+						elmnt.style.transform += "rotate("+(Math.random()-0.5)*20+"deg)";
 						elmnt.classList.remove("relative");
 						cardsInStack.push(elmnt);
 						hand.splice(hand.indexOf(elmnt),1);
 						redrawStack();
 					}else if(snapEl.id=="stackHandSnap"){
 						elmnt.style.transform = "";
-						elmnt.style.transform += "rotate("+(Math.random()-0.5)*10+"deg)";
+						elmnt.style.transform += "rotate("+(Math.random()-0.5)*20+"deg)";
 						elmnt.classList.remove("relative");
 						cardsInStackHand.push(elmnt);
 						hand.splice(hand.indexOf(elmnt),1);
@@ -212,13 +213,21 @@ function dragElement(elmnt) {
 
 function reloadHand() {
 	document.querySelector(".hand").innerHTML = "";
+	let lastCard;
 	for (let card of hand) {
 		document.querySelector(".hand").appendChild(card);
+		lastCard = card;
 	}
-	let fakeCard = document.createElement("card");
-	fakeCard.className = "Back fake vis_hidden relative";
-	fakeCard.innerText = cardNames[0];
-	document.querySelector(".hand").appendChild(fakeCard);
+	let pos=lastCard.getBoundingClientRect();
+	let style = window.getComputedStyle ? getComputedStyle(lastCard) : lastCard.currentStyle;
+	handWidth=(pos.width+(parseInt(style.marginLeft || 0))*2)*hand.length;
+	//Make scroll bar visible/invisible and resize itself
+	if(isOffscreen(lastCard)){
+		scrollRect.classList.remove('vis_hidden')
+		scrollRect.style.width = window.innerWidth*100/handWidth+"vw"
+	}else{
+		scrollRect.classList.add('vis_hidden')
+	}
 }
 
 for (let el of document.querySelectorAll("card:not(.fake):not(.hidden)")) {
@@ -230,7 +239,7 @@ document.querySelector(".deck").onclick = () => {
 	let index = Math.floor(Math.random() * (cardTypes.length));
 	card.className = cardTypes[index] + " relative";
 	card.innerText = cardNames[index];
-	hand.push(card);
+	hand.unshift(card); // Puts the card a the start, so that you see it when you draw it
 	reloadHand();
 	dragElement(card);
 };
@@ -258,22 +267,23 @@ function pushToHand(){
 
 function isOffscreen(elmnt){
 	let pos=elmnt.getBoundingClientRect();
-	return pos.x+pos.width<0 || pos.y+pos.height<0 || pos.x>window.innerWidth || pos.y>window.innerHeight;
+	return pos.x<0 || pos.y<0 || pos.x+pos.width>window.innerWidth || pos.y+pos.height>window.innerHeight;
 }
 
-document.querySelector(".hand").onmousewheel = handScroll;
+document.querySelector(".hand").onwheel = handScroll;
 
 function handScroll(e){
 	if(isOffscreen(document.querySelector(".hand").lastChild)){
-		handScrollPos+=e.deltaY/5;
+		handScrollPos+=e.deltaY/2.5;
 	}else if(e.deltaY>0){
-		handScrollPos+=e.deltaY/5;
+		handScrollPos+=e.deltaY/2.5;
 	}
 	let lastChildPos=document.querySelector(".hand").lastChild.getBoundingClientRect();
 	if(handScrollPos>0){
 		handScrollPos=0
 	}
 	document.querySelector(".hand").style.left=handScrollPos+"px";
+	scrollRect.style.left = Math.abs(handScrollPos)*window.innerWidth/handWidth+"px"
 }
 
 document.querySelector(".stackHandInfo.error").style.visibility="hidden";

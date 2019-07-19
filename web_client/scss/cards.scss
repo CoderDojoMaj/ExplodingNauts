@@ -41,14 +41,6 @@ card {
   background-color: #fff;
   margin: 5px;
   z-index: 3;
-  
-  &.hidden{
-    display: none;
-  }
-
-  &.vis_hidden{
-    visibility: hidden;
-  }
 
   &.relative{
     position: relative;

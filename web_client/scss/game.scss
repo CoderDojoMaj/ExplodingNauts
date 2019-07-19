@@ -18,7 +18,7 @@ $deck-left: 0;
     bottom: 0;
     padding-bottom: 20px;
     height: 230px;
-    width: 1395px;
+    min-width: 120vw;
     white-space: nowrap;
     overflow: visible;
     // overflow-x: auto;
@@ -102,4 +102,22 @@ $deck-left: 0;
     &.correct{
         background: #0c0;
     }
+}
+
+#scrollRect {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 10px;
+    //max-width: 25vw;
+    width: 25000px;
+    background: #ffffff50;
+}
+
+.vis_hidden{
+    visibility: hidden;
+}
+
+.hidden{
+    display: none;
 }
