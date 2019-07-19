@@ -1,16 +1,33 @@
 //WebSocket Stuff
-console.log(getCookie('EXPLODINGNAUTS_USER'))
 
 let url = 'ws://' + document.location.host
 let ws = new WebSocket(url)
 
 //Possible Message Names/Types => addCard, drawCard, explodePlayer (?)...
 ws.onmessage = (data) => {
-	console.log(data.data)
+	let message = data.data
+	let sMessage = message.match(/(.+?)\0(.+)/)
+	// console.log(sMessage, message)
+	let messageData = sMessage[2]
+	switch(sMessage[1].toUpperCase()){
+		case 'ADD_CARDS':
+			let arr = JSON.parse(messageData);
+			let cardArr = []
+			for(let className of arr){
+				let card = document.querySelector("."+className+".template");
+				card.classList.remove("hidden")
+				card.style.transform += "rotate("+(Math.random()-0.5)*20+"deg)";
+				cardArr.push(card);
+			}
+			console.log(cardArr)
+			cardsInStack=cardsInStack.concat(cardArr)
+			redrawStack()
+			break;
+	}
 }
 
 ws.onopen = () => {
-
+	ws.send(`HANDSHAKE\0${getCookie('EXPLODINGNAUTS_USER')}`)
 }
 
 //Game Stuff
@@ -130,12 +147,17 @@ function dragElement(elmnt) {
 					//console.log(currentX, currentY)
 
 					if(snapEl.id=="stackSnap"){
-						elmnt.style.transform = "";
-						elmnt.style.transform += "rotate("+(Math.random()-0.5)*20+"deg)";
-						elmnt.classList.remove("relative");
-						cardsInStack.push(elmnt);
+						// /*elmnt.style.transform = "";
+						// elmnt.style.transform += "rotate("+(Math.random()-0.5)*20+"deg)";
+						// elmnt.classList.remove("relative");
+						// cardsInStack.push(elmnt);*/
+						let messageToSend=[elmnt.classList[0]];
+						ws.send(`ADD_CARDS\0${JSON.stringify(messageToSend)}`);
 						hand.splice(hand.indexOf(elmnt),1);
-						redrawStack();
+						reloadHand();
+						//delete elmnt
+						
+						//redrawStack();
 					}else if(snapEl.id=="stackHandSnap"){
 						elmnt.style.transform = "";
 						elmnt.style.transform += "rotate("+(Math.random()-0.5)*20+"deg)";
@@ -152,8 +174,10 @@ function dragElement(elmnt) {
 							document.querySelector("#putMultiple").onclick=pushToHand;
 						}
 					}
-					handScrollPos+=document.querySelector(".hand").lastChild.getBoundingClientRect().width;
-					handScroll({deltaY:0});
+					if(document.querySelector(".hand").lastChild){
+						handScrollPos+=document.querySelector(".hand").lastChild.getBoundingClientRect().width;
+						handScroll({deltaY:0});
+					}
 				}
 			}
 			if(!snapped){
@@ -246,10 +270,15 @@ document.querySelector(".deck").onclick = () => {
 
 document.querySelector("#putMultiple").onclick = pushToStack;
 function pushToStack(){
-	cardsInStack=cardsInStack.concat(cardsInStackHand);
+	let messageToSend=[];
+	for(let card of cardsInStackHand){
+		messageToSend.push(card.classList[0]);
+	}
+	ws.send(`ADD_CARDS\0${JSON.stringify(messageToSend)}`);
+	//cardsInStack=cardsInStack.concat(cardsInStackHand);
 	cardsInStackHand=[];
 	redrawStackHand();
-	redrawStack();
+	//redrawStack();
 	getStackHandInfo();
 };
 

@@ -87,10 +87,37 @@ let server = require('http').createServer(app);
 
 let websocketServer = new ws.Server({server});
 
+let connections = {}
+
 websocketServer.on('connection', ws => {
+    let user;
     ws.on('message', message => {
-        console.log(message)
-        ws.send(message.charAt(0))
+        let sMessage = message.match(/(.+?)\0(.+)/)
+        console.log(sMessage, message)
+        let data = sMessage[2]
+        switch(sMessage[1].toUpperCase()){
+            case 'HANDSHAKE':
+                ws.send(`USER_LIST\0${JSON.stringify(Object.keys(connections))}`)
+                for(let connection of Object.values(connections)) {
+                    connection.send(`NEW_USER\0${data}`)
+                }
+                connections[data] = ws
+                user = data;
+                break;
+            case 'ADD_CARDS':
+                for(let username in connections) {
+                        connections[username].send(`ADD_CARDS\0${data}`)
+                }
+                break;
+        }
+    });
+    ws.on('close', ()=>{
+        if(user){
+            delete connections[user];
+            for(let connection of Object.values(connections)) {
+                connection.send(`USER_DISCONNECTED\0${user}`)
+            }
+        }
     });
 });
 
