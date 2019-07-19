@@ -273,14 +273,7 @@ function handScroll(e){
 	if(handScrollPos>0){
 		handScrollPos=0
 	}
-	if(handScrollPos<-lastChildPos.x){
-		handScrollPos=-lastChildPos.x
-	}
-	// if(handScrollPos<-(lastChildPos.x+lastChildPos.width)){
-	// 	handScrollPos=-(lastChildPos.x+lastChildPos.width);
-	// }
 	document.querySelector(".hand").style.left=handScrollPos+"px";
-	console.log(e.deltaY)
 }
 
 document.querySelector(".stackHandInfo.error").style.visibility="hidden";
