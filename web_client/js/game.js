@@ -59,23 +59,22 @@ function getStackHandInfo(){
 	for(let card of cardsInStackHand){
 		classList.push(card.classList[0]);
 	}
-
-	if(classList.length==0){
+	if(classList.length==0){ //No Cards in StackHand
 		document.querySelector(".stackHandInfo.error").style.visibility="hidden";
 		document.querySelector(".stackHandInfo.correct").style.visibility="hidden";
-	}else if(classList[0]==classList[1] && classList.length==2 && classList[0].indexOf("Cat")!=-1){
+	}else if(classList[0]==classList[1] && classList.length==2 && classList[0].indexOf("Cat")!=-1){ //Same 2 cat cards
 		document.querySelector(".stackHandInfo.error").style.visibility="hidden";
 		document.querySelector(".stackHandInfo.correct").style.visibility="visible";
 		canPush=true;
-	}else if(classList[0]==classList[1] && classList[1]==classList[2] && classList.length==3 && classList[0].indexOf("Cat")!=-1){
+	}else if(classList[0]==classList[1] && classList[1]==classList[2] && classList.length==3 && classList[0].indexOf("Cat")!=-1){ //Same 3 cat cards
 		document.querySelector(".stackHandInfo.error").style.visibility="hidden";
 		document.querySelector(".stackHandInfo.correct").style.visibility="visible";
 		canPush=true;
-	}else if([...new Set(classList)].length==5 && classList.length==5){
+	}else if([...new Set(classList)].length==5 && classList.length==5){ //5 different cards
 		document.querySelector(".stackHandInfo.error").style.visibility="hidden";
 		document.querySelector(".stackHandInfo.correct").style.visibility="visible";
 		canPush=true;
-	}else{
+	}else{ //No valid combination
 		document.querySelector(".stackHandInfo.error").style.visibility="visible";
 		document.querySelector(".stackHandInfo.correct").style.visibility="hidden";
 	}
