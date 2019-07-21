@@ -106,10 +106,12 @@ websocketServer.on('connection', ws => {
                 for(let connection of Object.values(connections)) {
                     connection.send(`NEW_USER\0${data}`)
                 }
+                if(Object.keys(connections).length==0){
+                    generateDeck(Date.now());
+                    deck[0]=4;
+                }
                 connections[data] = ws
                 user = data;
-                generateDeck(Date.now());
-                deck[0]=4;
                 timerStarted=true;
                 break;
             case 'ADD_CARDS':
@@ -152,7 +154,7 @@ websocketServer.on('connection', ws => {
 
 function generateDeck(seed){
     Math.seed=seed;
-    for(let c=0;c<Math.seededRandom(30,45);c++){
+    for(let c=0;c<Math.seededRandom(3,3);c++){
         deck.push(Math.floor(Math.seededRandom(-1,12)));
     }
 }

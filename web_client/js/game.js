@@ -59,9 +59,9 @@ ws.onmessage = (data) => {
 					cardList.push(null);
 				}
 			}
-			document.getElementById("stf_card1").outerHTML=cardList[0]==null ? `<card id="stf_card1"></card>` : cardList[0].outerHTML;
-			document.getElementById("stf_card2").outerHTML=cardList[1]==null ? `<card id="stf_card2"></card>` : cardList[1].outerHTML;
-			document.getElementById("stf_card3").outerHTML=cardList[2]==null ? `<card id="stf_card3"></card>` : cardList[2].outerHTML;
+			document.getElementById("stf_card1").outerHTML=cardList[0]==null ? `<card id="stf_card1" class="hidden"></card>` : cardList[0].outerHTML;
+			document.getElementById("stf_card2").outerHTML=cardList[1]==null ? `<card id="stf_card2" class="hidden"></card>` : cardList[1].outerHTML;
+			document.getElementById("stf_card3").outerHTML=cardList[2]==null ? `<card id="stf_card3" class="hidden"></card>` : cardList[2].outerHTML;
 			document.getElementById("stf_modal").classList.remove("hidden");
 			break;
 	}
