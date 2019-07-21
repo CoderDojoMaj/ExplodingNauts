@@ -72,7 +72,7 @@ ws.onopen = () => {
 }
 
 //Game Stuff
-let scrollRect = document.getElementById('scrollRect')
+let scrollRect = document.querySelector('.scrollRect#hand_scroll')
 
 let stackHandSnapCard = document.getElementById('stackHandSnap')
 let stackSnapCard = document.getElementById('stackSnap')
@@ -215,8 +215,8 @@ function dragElement(elmnt) {
 							document.querySelector("#putMultiple").onclick=pushToHand;
 						}
 					}
-					if(document.querySelector(".hand").lastChild){
-						handScrollPos+=document.querySelector(".hand").lastChild.getBoundingClientRect().width;
+					if(document.querySelector("#hand").lastChild){
+						handScrollPos+=document.querySelector("#hand").lastChild.getBoundingClientRect().width;
 						handScroll({deltaY:0});
 					}
 				}
@@ -227,7 +227,7 @@ function dragElement(elmnt) {
 				yOffset=0;
 			}
 
-			// document.querySelector(".hand").style.overflowX = "auto";
+			// document.querySelector("#hand").style.overflowX = "auto";
 
 			initialX = currentX;
 			initialY = currentY;
@@ -252,7 +252,7 @@ function dragElement(elmnt) {
 			xOffset = currentX;
 			yOffset = currentY;
 
-			// document.querySelector(".hand").style.overflowX = "visible";
+			// document.querySelector("#hand").style.overflowX = "visible";
 
 			// TODO snap to hand & stack
 
@@ -277,24 +277,25 @@ function dragElement(elmnt) {
 }
 
 function reloadHand() {
-	document.querySelector(".hand").innerHTML = "";
+	document.querySelector("#hand").innerHTML = "";
 	let lastCard;
 	for (let card of hand) {
-		document.querySelector(".hand").appendChild(card);
+		document.querySelector("#hand").appendChild(card);
 		lastCard = card;
 	}
-	if(lastCard){
-		let pos=lastCard.getBoundingClientRect();
-		let style = window.getComputedStyle ? getComputedStyle(lastCard) : lastCard.currentStyle;
-		handWidth=(pos.width+(parseInt(style.marginLeft || 0))*2)*hand.length;
-		//Make scroll bar visible/invisible and resize itself
-		if(isOffscreen(lastCard)){
-			scrollRect.classList.remove('vis_hidden')
-			scrollRect.style.width = window.innerWidth*100/handWidth+"vw"
-		}else{
-			scrollRect.classList.add('vis_hidden')
-		}
-	}
+	calcElementWidth(document.querySelector("#hand"), scrollRect)
+	// if(lastCard){
+	// 	let pos=lastCard.getBoundingClientRect();
+	// 	let style = window.getComputedStyle ? getComputedStyle(lastCard) : lastCard.currentStyle;
+	// 	handWidth=(pos.width+(parseInt(style.marginLeft || 0))*2)*hand.length;
+	// 	//Make scroll bar visible/invisible and resize itself
+	// 	if(isOffscreen(lastCard)){
+	// 		scrollRect.classList.remove('vis_hidden')
+	// 		scrollRect.style.width = window.innerWidth*100/handWidth+"vw"
+	// 	}else{
+	// 		scrollRect.classList.add('vis_hidden')
+	// 	}
+	// }
 }
 
 for (let el of document.querySelectorAll("card:not(.fake):not(.hidden)")) {
@@ -351,20 +352,55 @@ function isOffscreen(elmnt){
 	return pos.x<0 || pos.y<0 || pos.x+pos.width>window.innerWidth || pos.y+pos.height>window.innerHeight;
 }
 
-document.querySelector(".hand").onwheel = handScroll;
+document.querySelector("#hand").onwheel = scrollableElement;
 
 function handScroll(e){
-	if(isOffscreen(document.querySelector(".hand").lastChild)){
+	if(isOffscreen(document.querySelector("#hand").lastChild)){
 		handScrollPos+=e.deltaY/2.5;
 	}else if(e.deltaY>0){
 		handScrollPos+=e.deltaY/2.5;
 	}
-	let lastChildPos=document.querySelector(".hand").lastChild.getBoundingClientRect();
+	let lastChildPos=document.querySelector("#hand").lastChild.getBoundingClientRect();
 	if(handScrollPos>0){
 		handScrollPos=0
 	}
-	document.querySelector(".hand").style.left=handScrollPos+"px";
+	document.querySelector("#hand").style.left=handScrollPos+"px";
 	scrollRect.style.left = Math.abs(handScrollPos)*window.innerWidth/handWidth+"px"
+}
+
+function scrollableElement(e){
+	let elmnt=e.target.tagName=="DIV" ? e.target : e.target.parentElement;
+	let elmntPrefix=elmnt.id.indexOf("_")==-1 ? elmnt.id : elmnt.id.substring(0,elmnt.id.indexOf("_"));
+	let scrollbar=document.querySelector(`.scrollRect#${elmntPrefix}_scroll`);
+	if(!elmnt.scrollPos) elmnt.scrollPos=0
+	if(isOffscreen(elmnt.lastChild)){
+		elmnt.scrollPos+=e.deltaY/2.5;
+	}else if(e.deltaY>0){
+		elmnt.scrollPos+=e.deltaY/2.5;
+	}
+	if(elmnt.scrollPos>0){
+		elmnt.scrollPos=0
+	}
+	elmnt.style.left=elmnt.scrollPos+"px";
+	calcElementWidth(elmnt, scrollbar)
+	scrollbar.style.left = Math.abs(elmnt.scrollPos)*window.innerWidth/elmnt.width+"px"
+}
+
+function calcElementWidth(elmnt, scrollbar){
+	elmnt.width=0
+	let last=elmnt.lastChild;
+	for(let node of elmnt.children){
+		let pos=node.getBoundingClientRect();
+		let style = window.getComputedStyle ? getComputedStyle(node) : node.currentStyle;
+		elmnt.width+=(pos.width+(parseInt(style.marginLeft || 0))*2);
+	}
+	//Make scroll bar visible/invisible and resize itself
+	if(isOffscreen(last) || isOffscreen(elmnt.children[0])){
+		scrollbar.classList.remove('vis_hidden')
+		scrollbar.style.width = window.innerWidth*100/elmnt.width+"vw"
+	}else{
+		scrollbar.classList.add('vis_hidden')
+	}
 }
 
 document.querySelector(".stackHandInfo.error").style.visibility="hidden";

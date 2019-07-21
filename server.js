@@ -154,7 +154,7 @@ websocketServer.on('connection', ws => {
 
 function generateDeck(seed){
     Math.seed=seed;
-    for(let c=0;c<Math.seededRandom(3,3);c++){
+    for(let c=0;c<Math.seededRandom(30,45);c++){
         deck.push(Math.floor(Math.seededRandom(-1,12)));
     }
 }
