@@ -182,3 +182,61 @@ $deck-left: 0;
         margin-top: 23px;
     }
 }
+
+#defused_{
+    &modal{
+        width: 100vw;
+        height: 100vh;
+        z-index: 300;
+        &*{
+            z-index: 300;
+        }
+    }
+
+    &cards{
+        position: relative;
+        padding-bottom: 20px;
+        height: 230px;
+        min-width: 120vw;
+        white-space: nowrap;
+        overflow: visible;
+    }
+
+    &ok {
+        position: relative;
+        border: 3px solid #29c031;
+        box-shadow: 0 5px 0 0px #209b20;
+        background: #3fce2c;
+        color: #fff;
+        padding: 10px 30px;
+        font-size: 25px;
+        border-radius: 10px;
+        display: block;
+        margin-top: 20px;
+        margin-left: auto;
+        margin-right: auto;
+        top: -25px;
+        outline: none;
+    }
+    
+    &ok:active {
+        box-shadow: 0 2px 0 0px #349b20;
+        margin-top: 23px;
+    }
+
+    &_scroll{
+        position: absolute;
+        z-index: 30;
+        left: 0;
+    }
+}
+
+#ek_position_defused {
+    position: absolute;
+    margin-top: 12.5px;
+    height: 210px; // Card height
+    width: 4px;
+    background: #14141469;
+    border-radius: 1.5px;
+    left: 176px - 4px/2;
+}

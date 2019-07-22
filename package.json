@@ -7,6 +7,7 @@
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.4",
     "express": "^4.16.4",
+    "nodemon": "^1.19.1",
     "sass": "^1.22.5",
     "ws": "^7.1.0"
   },
@@ -14,14 +15,15 @@
     "start": "npm run build-css && node server.js",
     "test": "node server.js",
     "build-css": "sass --source-map -s compressed web_client/scss:web_client/css",
-    "watch-css": "sass --watch --source-map -s compressed web_client/scss:web_client/css"
+    "watch-css": "sass --watch --source-map -s compressed web_client/scss:web_client/css",
+    "watch-js": "nodemon server.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/CoderDojoMaj/ExplodingNauts.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Coderdojo Majadahonda",
+  "license": "CC BY-NC-SA 4.0",
   "bugs": {
     "url": "https://github.com/CoderDojoMaj/ExplodingNauts/issues"
   },

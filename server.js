@@ -85,14 +85,29 @@ app.get('/game', async function (req, res) {
 
 let server = require('http').createServer(app);
 
-let websocketServer = new ws.Server({server});
+let websocketServer = new ws.Server({ server });
 
 let connections = {}
-let deck=[];
-let turn=0;
-let turnOrder=0;
-let startTimer=30;
-let timerStarted=false;
+let deck = [];
+let turn = 0;
+let turnOrder = 0;
+let startTimer = 30;
+let timerStarted = false;
+let cardIds = {
+    explodingKitten: 0,
+    attack: 1,
+    defuse: 2,
+    nope: 3,
+    seeTheFuture: 4,
+    skip: 5,
+    favor: 6,
+    shuffle: 7,
+    rainbowCat: 8,
+    hairyPotatoCat: 9,
+    tacoCat: 10,
+    beardCat: 11,
+    cattermelon: 12
+};
 
 websocketServer.on('connection', ws => {
     let user;
@@ -100,42 +115,46 @@ websocketServer.on('connection', ws => {
         let sMessage = message.match(/(.+?)\0(.+)/)
         console.log(sMessage, message)
         let data = sMessage[2]
-        switch(sMessage[1].toUpperCase()){
+        switch (sMessage[1].toUpperCase()) {
             case 'HANDSHAKE':
                 ws.send(`USER_LIST\0${JSON.stringify(Object.keys(connections))}`)
-                for(let connection of Object.values(connections)) {
+                for (let connection of Object.values(connections)) {
                     connection.send(`NEW_USER\0${data}`)
                 }
-                if(Object.keys(connections).length==0){
-                    generateDeck(Date.now());
-                    deck[0]=4;
+                if (Object.keys(connections).length == 0) {
+                    generateDeck();
+                    deck[0] = cardIds.explodingKitten;
                 }
                 connections[data] = ws
                 user = data;
-                timerStarted=true;
+                timerStarted = true;
+                connections[user].send(`DRAW_CARD\0${cardIds.defuse}`)
                 break;
             case 'ADD_CARDS':
-                for(let username in connections) {
+                for (let username in connections) {
                     connections[username].send(`ADD_CARDS\0${data}`)
+                }
+                if(data=="SeeTheFuture"){
+                    let list = [];
+                    for (let i = 0; i < 3; i++) {
+                        list.push(deck[i])
+                    }
+                    connections[user].send(`ANS_SEETHEFUTURE\0${JSON.stringify(list)}`)
                 }
                 break;
             case 'DRAW_CARD':
-                connections[user].send(`DRAW_CARD\0${deck[turn]}`)
+                connections[user].send(`DRAW_CARD\0${deck.shift()}`)
                 turn++;
                 break;
-            case 'REQ_SEETHEFUTURE':
-                let list=[];
-                for(let i=turn;i<turn+parseInt(data);i++){
-                    list.push(deck[i])
-                }
-                connections[user].send(`ANS_SEETHEFUTURE\0${JSON.stringify(list)}`)
+            case "GET_DECK":
+                connections[user].send(`ACTUAL_DECK\0${JSON.stringify(deck)}`)
                 break;
         }
     });
-    ws.on('close', ()=>{
-        if(user){
+    ws.on('close', () => {
+        if (user) {
             delete connections[user];
-            for(let connection of Object.values(connections)) {
+            for (let connection of Object.values(connections)) {
                 connection.send(`USER_DISCONNECTED\0${user}`)
             }
         }
@@ -152,28 +171,59 @@ websocketServer.on('connection', ws => {
     // },1000)
 });
 
-function generateDeck(seed){
-    Math.seed=seed;
-    for(let c=0;c<Math.seededRandom(30,45);c++){
-        deck.push(Math.floor(Math.seededRandom(-1,12)));
+//["ExplodingKitten", "Attack", "Defuse", "Nope", "SeeTheFuture", "Skip", "Favor", "Shuffle", "RainbowCat", "HairyPotatoCat", "TacoCat", "BeardCat", "Cattermelon"]
+function generateDeck(players = 5) {
+    let cards = []
+    
+    for (let i = 0; i < players - 1; i++) {
+        cards.push(cardIds.explodingKitten)
+    }
+    for (let i = 0; i < 4; i++) {
+        cards.push(cardIds.attack)
+    }
+    for (let i = 0; i < Math.max(1 + players, 6 - players); i++) {
+        cards.push(cardIds.defuse)
+    }
+    for (let i = 0; i < 5; i++) {
+        cards.push(cardIds.nope)
+    }
+    for (let i = 0; i < 5; i++) {
+        cards.push(cardIds.seeTheFuture)
+    }
+    for (let i = 0; i < 4; i++) {
+        cards.push(cardIds.skip)
+    }
+    for (let i = 0; i < 4; i++) {
+        cards.push(cardIds.favor)
+    }
+    for (let i = 0; i < 4; i++) {
+        cards.push(cardIds.shuffle)
+    }
+    for (let i = 0; i < 4; i++) {
+        cards.push(cardIds.rainbowCat)
+    }
+    for (let i = 0; i < 4; i++) {
+        cards.push(cardIds.hairyPotatoCat)
+    }
+    for (let i = 0; i < 4; i++) {
+        cards.push(cardIds.tacoCat)
+    }
+    for (let i = 0; i < 4; i++) {
+        cards.push(cardIds.beardCat)
+    }
+    for (let i = 0; i < 4; i++) {
+        cards.push(cardIds.cattermelon)
+    }
+    
+    // Shuffle deck
+    let numberOfCards = cards.length;
+    for (let c = 0; c < numberOfCards; c++) {
+        let index=Math.floor(Math.random()*cards.length);
+        deck.push(cards[index])
+        cards.splice(index,1)
     }
 }
 
 server.listen(8080, function () {
     console.log('listening on *:' + 8080);
 });
-
-
-/*let server = app.listen(8080, function () {
-    console.log('listening on *:' + 8080);
-});*/
-
-Math.seededRandom = function(max, min) {
-    max = max || 1;
-    min = min || 0;
- 
-    Math.seed = (Math.seed * 9301 + 49297) % 233280;
-    var rnd = Math.seed / 233280;
- 
-    return min + rnd * (max - min);
-}
