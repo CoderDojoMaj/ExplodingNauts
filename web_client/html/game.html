@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +13,9 @@
    <link rel="stylesheet" href="css/game.css">
    <link rel="stylesheet" href="css/cards.css">
 </head>
+
 <body>
+   <div id="blurable">
    <h1 id="username" class="subtitle"></h1>
    <card class="ExplodingKitten hidden template">Exploding kitten</card>
    <card class="Attack hidden template">Attack</card>
@@ -29,23 +32,32 @@
    <card class="Cattermelon hidden template">Cattermelon</card>
    <card class="Back hidden template"></card>
 
-	<div class="deck">
-		<card class="Back fake"></card>
-		<card class="Back fake"></card>
-		<card class="Back fake"></card>
+   <div class="deck">
+      <card class="Back fake"></card>
+      <card class="Back fake"></card>
+      <card class="Back fake"></card>
    </div>
-   
-   <p id="startTime"><span id="timer"></span>&#128337;</p>
+
+   <div id="sidebar">
+      <p id="startTime"><span id="timer"></span>&#128337;</p>
+      <div class="sep"></div>
+      <img src="/images/people.svg" id="people">
+   </div>
 
    <div id="hand"></div>
    <div id="hand_scroll" class="scrollRect vis_hidden"></div>
 
-   <div class="stack"><card class="Snap vis_hidden fake" id="stackSnap"></card></div>
+   <div class="stack">
+      <card class="Snap vis_hidden fake" id="stackSnap"></card>
+   </div>
    <button id="putMultiple">&#10137;</button>
    <div class="stackHandInfo correct">&#10004;</div>
    <div class="stackHandInfo error">&#10008;</div>
-   <div class="stackHand"><card class="Snap vis_hidden fake" id="stackHandSnap"></card></div>
-    
+   <div class="stackHand">
+      <card class="Snap vis_hidden fake" id="stackHandSnap"></card>
+   </div>
+   </div>
+
    <div id="stf_modal" class="hidden">
       <card id="stf_card1"></card>
       <card id="stf_card2"></card>
@@ -61,7 +73,18 @@
    </div>
    <div id="defused_scroll" class="scrollRect vis_hidden"></div>
 
+   <div id="people_modal" class="hidden">
+      <div id="people_modal_content">
+         Hi
+      </div>
+   </div>
+
    <script src="js/lib/jscookie.js"></script>
+   <script src="js/gameVariables.js"></script>
+   <script src="js/ws.js"></script>
+   <script src="js/utils.js"></script>
    <script src="js/game.js"></script>
+   <script src="js/modals.js"></script>
 </body>
+
 </html>
