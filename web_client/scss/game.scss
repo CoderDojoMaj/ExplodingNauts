@@ -214,6 +214,12 @@ $deck-left: 0;
         margin-top: 23px;
     }
 
+    &ok:disabled {
+        border: 3px solid lighten(desaturate($color: #29c031, $amount: 100),10);
+        box-shadow: 0 5px 0 0px lighten(desaturate($color: #209b20, $amount: 100),10);
+        background: lighten(desaturate($color: #3fce2c, $amount: 100),20);
+    }
+
     &_scroll{
         position: absolute;
         z-index: 30;

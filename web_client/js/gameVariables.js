@@ -1,6 +1,7 @@
 var scrollRect = document.querySelector('.scrollRect#hand_scroll')
 
 var ek_position_defused = document.getElementById('ek_position_defused');
+var ek_index = 0;
 
 var stackHandSnapCard = document.getElementById('stackHandSnap')
 var stackSnapCard = document.getElementById('stackSnap')

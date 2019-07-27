@@ -40,4 +40,6 @@ document.querySelector("#defused_ok").onclick = (e) => {
 	document.getElementById("defused_cards").innerHTML = '';
 	document.getElementById("defused_cards").appendChild(ek_position_defused);
 	document.getElementById("defused_cards").onmousemove = () => {}
+	localDeck.splice(ek_index,0,0)
+	ws.send(`SET_DECK\0${JSON.stringify(localDeck)}`);
 };

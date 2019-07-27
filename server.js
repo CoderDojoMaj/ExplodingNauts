@@ -122,8 +122,8 @@ websocketServer.on('connection', ws => {
                     connection.send(`NEW_USER\0${data}`)
                 }
                 if (Object.keys(connections).length == 0) {
+                    deck=[];
                     generateDeck();
-                    deck[0] = cardIds.explodingKitten;
                 }
                 connections[data] = ws
                 user = data;
@@ -148,6 +148,9 @@ websocketServer.on('connection', ws => {
                 break;
             case "GET_DECK":
                 connections[user].send(`ACTUAL_DECK\0${JSON.stringify(deck)}`)
+                break;
+            case "SET_DECK":
+                deck=JSON.parse(data);
                 break;
         }
     });
