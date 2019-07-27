@@ -232,6 +232,7 @@ function pushToHand() {
 };
 
 function isOffscreen(elmnt) {
+	if(!elmnt) return false;
 	let pos = elmnt.getBoundingClientRect();
 	return pos.x < 0 || pos.y < 0 || pos.x + pos.width > window.innerWidth || pos.y + pos.height > window.innerHeight;
 }

@@ -124,6 +124,7 @@ websocketServer.on('connection', ws => {
                 if (Object.keys(connections).length == 0) {
                     deck=[];
                     generateDeck();
+                    deck[0] = cardIds.explodingKitten;
                 }
                 connections[data] = ws
                 user = data;
