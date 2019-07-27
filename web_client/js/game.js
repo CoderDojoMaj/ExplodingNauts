@@ -1,8 +1,3 @@
-//WebSocket Stuff
-
-//Game Stuff
-
-
 document.querySelector("#username").innerText = getCookie("EXPLODINGNAUTS_USER");
 
 for (let el of document.querySelectorAll("card:not(.fake):not(.hidden)")) {
