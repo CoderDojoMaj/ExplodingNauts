@@ -251,7 +251,6 @@ function handScroll(e) {
 }
 
 function scrollableElement(e) {
-	console.log(e)
 	let elmnt = e.target.tagName == "DIV" ? e.target : e.target.parentElement;
 	let elmntPrefix = elmnt.id.indexOf("_") == -1 ? elmnt.id : elmnt.id.substring(0, elmnt.id.indexOf("_"));
 	let scrollbar = document.querySelector(`.scrollRect#${elmntPrefix}_scroll`);
@@ -293,28 +292,14 @@ function handContainsCard(cardClass) {
 	return false
 }
 
-function showDefuseModal() {
-	document.getElementById("defused_cards").scrollPos=0;
-	addClassToAll(document.querySelector("body"), "darken", true, true, "defused");
-	for (let cardId of localDeck) {
-		let backCard = document.querySelector(".Back.template").cloneNode(true);
-		backCard.classList.remove("hidden");
-		backCard.classList.remove("template");
-		backCard.classList.add("relative");
-		document.getElementById("defused_cards").appendChild(backCard);
-	}
-	document.getElementById("defused_modal").classList.remove("hidden");
-	let defusedCardPos=document.getElementById("defused_cards").getBoundingClientRect();
-	calcElementWidth(document.getElementById("defused_cards"), document.getElementById("defused_scroll"));
-	document.getElementById("defused_scroll").style.top=`-${window.innerHeight-defusedCardPos.height+15}px`;
-	document.getElementById("defused_cards").onmousemove = (e) => {
-		// document.getElementById("ek_position_defused")
-		console.log(e)
-		let pos = Math.min(Math.round((e.x-document.getElementById("defused_cards").scrollPos) / 176), localDeck.length) * 176;	// Add scroll pos
-		ek_position_defused.style.left = `${pos - ek_position_defused .getBoundingClientRect().width / 2}px`
-	}
-}
-
+/**
+ * addClassToAll
+ * @param {*} parentElmnt The element to start the search from
+ * @param {*} className The class to add to the matching elements
+ * @param {*} disableClickables If this disables clickables
+ * @param {*} disableDraggables If this disables draggables
+ * @param {*} exceptId Elements with this Id/Prefix will not be added the class
+ */
 function addClassToAll(parentElmnt, className, disableClickables, disableDraggables, exceptId = "") {
 	for (let node of parentElmnt.querySelectorAll("*:not(.template)")) {
 		if (node.id.indexOf(exceptId) == -1) {
@@ -326,6 +311,13 @@ function addClassToAll(parentElmnt, className, disableClickables, disableDraggab
 	}
 }
 
+/**
+ * removeClassFromAll
+ * @param {*} parentElmnt The element to start the search from.
+ * @param {*} className The class to remove to the matching element
+ * @param {*} enableDisabled Enable the disabled elements
+ * @param {*} exceptId Elements with this Id/Prefix will not be removed the class
+ */
 function removeClassFromAll(parentElmnt, className, enableDisabled, exceptId = "") {
 	for (let node of parentElmnt.querySelectorAll("*:not(.template)")) {
 		if (node.id.indexOf(exceptId) == -1) {
