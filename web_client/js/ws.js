@@ -47,20 +47,18 @@ ws.onmessage = (data) => {
 			let cardNum = 1;
 			for (let card of answer) {
 				try {
-					let actual = document.querySelector("." + cardTypes[parseInt(card)] + ".template").cloneNode(true);
-					actual.classList.remove("hidden");
-					actual.classList.remove("template");
+					let actual = getCardById(parseInt(card))
 					actual.classList.add("fake");
 					actual.id = `stf_card${cardNum}`
 					cardList.push(actual);
 					cardNum++;
 				} catch (e) {
-					cardList.push(null);
+					break;
 				}
 			}
-			document.getElementById("stf_card1").outerHTML = cardList[0] == null ? `<card id="stf_card1" class="hidden"></card>` : cardList[0].outerHTML;
-			document.getElementById("stf_card2").outerHTML = cardList[1] == null ? `<card id="stf_card2" class="hidden"></card>` : cardList[1].outerHTML;
-			document.getElementById("stf_card3").outerHTML = cardList[2] == null ? `<card id="stf_card3" class="hidden"></card>` : cardList[2].outerHTML;
+			document.getElementById("stf_card1").outerHTML = cardList[0] == undefined ? `<card id="stf_card1" class="hidden"></card>` : cardList[0].outerHTML;
+			document.getElementById("stf_card2").outerHTML = cardList[1] == undefined ? `<card id="stf_card2" class="hidden"></card>` : cardList[1].outerHTML;
+			document.getElementById("stf_card3").outerHTML = cardList[2] == undefined ? `<card id="stf_card3" class="hidden"></card>` : cardList[2].outerHTML;
 			document.getElementById("stf_modal").classList.remove("hidden");
 			break;
 		case "ACTUAL_DECK":

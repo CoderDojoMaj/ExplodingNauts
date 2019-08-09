@@ -293,6 +293,15 @@ function handContainsCard(cardClass) {
 	return false
 }
 
+function getHandCardIndex(cardClass) {
+	let index=0;
+	for (let card of hand) {
+		if (card.classList.contains(cardClass)) return index
+		else index++;
+	}
+	return -1;
+}
+
 /**
  * addClassToAll
  * @param {*} parentElmnt The element to start the search from
@@ -333,4 +342,11 @@ function enableAllDisabled() {
 	for (let node of document.querySelectorAll("*[disabled='true']")) {
 		node.removeAttribute("disabled")
 	}
+}
+
+function getCardById(id){
+	let card = document.querySelector("." + cardTypes[id] + ".template").cloneNode(true);
+	card.classList.remove("hidden");
+	card.classList.remove("template");
+	return card;
 }

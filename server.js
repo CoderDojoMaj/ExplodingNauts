@@ -124,7 +124,6 @@ websocketServer.on('connection', ws => {
                 if (Object.keys(connections).length == 0) {
                     deck=[];
                     generateDeck();
-                    deck[0] = cardIds.explodingKitten;
                 }
                 connections[data] = ws
                 user = data;
@@ -135,7 +134,7 @@ websocketServer.on('connection', ws => {
                 for (let username in connections) {
                     connections[username].send(`ADD_CARDS\0${data}`)
                 }
-                if(data=="SeeTheFuture"){
+                if(data.indexOf("SeeTheFuture")!=-1){
                     let list = [];
                     for (let i = 0; i < 3; i++) {
                         list.push(deck[i])
