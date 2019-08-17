@@ -10,6 +10,7 @@ function openPeopleModal(){
 
 function showDefuseModal() {
 	document.getElementById("defused_cards").scrollPos=0;
+	refreshScroll(document.getElementById("defused_cards"));
 	addClassToAll(document.querySelector("body"), "darken", true, true, "defused");
 	document.getElementById("defused_ok").setAttribute("disabled", true)
 	for (let cardId of localDeck) {

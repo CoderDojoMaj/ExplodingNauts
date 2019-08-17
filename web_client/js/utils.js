@@ -350,3 +350,11 @@ function getCardById(id){
 	card.classList.remove("template");
 	return card;
 }
+
+function refreshScroll(elmnt){
+	elmnt.style.left = elmnt.scrollPos + "px";
+	
+	let elmntPrefix = elmnt.id.indexOf("_") == -1 ? elmnt.id : elmnt.id.substring(0, elmnt.id.indexOf("_"));
+	let scrollbar = document.querySelector(`.scrollRect#${elmntPrefix}_scroll`);
+	scrollbar.style.left = Math.abs(elmnt.scrollPos) * window.innerWidth / elmnt.width + "px"
+}
