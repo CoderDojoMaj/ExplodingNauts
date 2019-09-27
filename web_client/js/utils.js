@@ -311,7 +311,7 @@ function getHandCardIndex(cardClass) {
  * @param {*} exceptId Elements with this Id/Prefix will not be added the class
  */
 function addClassToAll(parentElmnt, className, disableClickables, disableDraggables, exceptId = "") {
-	for (let node of parentElmnt.querySelectorAll("*:not(.template)")) {
+	for (let node of parentElmnt.querySelectorAll(":scope > *:not(.template)")) { // Targets all direct children of parentElmnt
 		if (node.id.indexOf(exceptId) == -1) {
 			node.classList.add(className);
 			if (node.onclick && disableClickables) node.setAttribute("disabled", true)

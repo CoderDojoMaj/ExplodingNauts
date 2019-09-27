@@ -251,6 +251,7 @@ $deck-left: 0;
         &*{
             z-index: 300;
         }
+
         &_content {
             background: white;
             color: black;
@@ -261,6 +262,26 @@ $deck-left: 0;
             border-radius: 10px;
             margin: auto;
             margin-top: (100vh - 80vh)/2;
+
+            h2{
+                display: inline;
+            }
+
+            #leave{
+                border: 1px solid #000;
+                background: #c95959;
+                float: right;
+            }
         }
+    }
+
+    &list {
+        height: 90%;
+    }
+
+    &ok {
+        border: 1px solid #000;
+        background: #59c959;
+        padding: 5px 10px;
     }
 }

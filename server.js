@@ -117,15 +117,17 @@ websocketServer.on('connection', ws => {
         let data = sMessage[2]
         switch (sMessage[1].toUpperCase()) {
             case 'HANDSHAKE':
-                ws.send(`USER_LIST\0${JSON.stringify(Object.keys(connections))}`)
-                for (let connection of Object.values(connections)) {
-                    connection.send(`NEW_USER\0${data}`)
-                }
                 if (Object.keys(connections).length == 0) {
                     deck=[];
                     generateDeck();
                 }
                 connections[data] = ws
+                ws.send(`USER_LIST\0${JSON.stringify(Object.keys(connections))}`)
+                for (let connection of Object.values(connections)) {
+                    if(connection != ws)
+                        connection.send(`NEW_USER\0${data}`)
+                }
+                
                 user = data;
                 timerStarted = true;
                 connections[user].send(`DRAW_CARD\0${cardIds.defuse}`)

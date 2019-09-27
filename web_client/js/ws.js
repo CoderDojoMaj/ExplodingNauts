@@ -22,9 +22,12 @@ ws.onmessage = (data) => {
 			cardsInStack = cardsInStack.concat(cardArr)
 			redrawStack()
 			break;
-		// case 'STARTING_TIME':
-		// 	document.getElementById("timer").innerText=messageData;
-		// 	break;
+		case 'USER_LIST':
+			playerList=JSON.parse(messageData)
+			break;
+		case 'NEW_USER':
+			playerList.push(messageData)
+			break;
 		case "DRAW_CARD":
 			let card = document.querySelector("." + cardTypes[parseInt(messageData)] + ".template").cloneNode(true);
 			card.classList.remove("hidden");

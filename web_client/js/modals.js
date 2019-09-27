@@ -47,4 +47,4 @@ function showDefuseModal() {
 
 document.getElementById("people").onclick = openPeopleModal
 
-document.getElementById("people_modal").onclick = closePeopleModal
+document.getElementById("people_ok").onclick = closePeopleModal
