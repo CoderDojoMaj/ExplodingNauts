@@ -42,6 +42,10 @@ card {
   margin: 5px;
   z-index: 3;
 
+  &[disabled=true]{
+    filter: brightness(70%);
+  }
+
   &.relative{
     position: relative;
   }

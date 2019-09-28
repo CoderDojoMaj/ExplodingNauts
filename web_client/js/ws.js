@@ -24,9 +24,17 @@ ws.onmessage = (data) => {
 			break;
 		case 'USER_LIST':
 			playerList=JSON.parse(messageData)
+			populatePeopleModal();
 			break;
 		case 'NEW_USER':
-			playerList.push(messageData)
+			if(playerList.indexOf(messageData) == -1)
+				playerList.push(messageData)
+			populatePeopleModal();
+			break;
+		case 'USER_DISCONNECTED':
+			if(playerList.indexOf(messageData) != -1)
+				playerList.splice(playerList.indexOf(messageData),1)
+			populatePeopleModal();
 			break;
 		case "DRAW_CARD":
 			let card = document.querySelector("." + cardTypes[parseInt(messageData)] + ".template").cloneNode(true);

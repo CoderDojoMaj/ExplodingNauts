@@ -358,3 +358,21 @@ function refreshScroll(elmnt){
 	let scrollbar = document.querySelector(`.scrollRect#${elmntPrefix}_scroll`);
 	scrollbar.style.left = Math.abs(elmnt.scrollPos) * window.innerWidth / elmnt.width + "px"
 }
+
+function populatePeopleModal(){
+	document.querySelector("#people_list").innerHTML = "";
+	playerList.sort();
+	for(let player of playerList){
+		let playerLi = document.createElement("li");
+		playerLi.innerText = player;
+		document.querySelector("#people_list").appendChild(playerLi);
+	}
+}
+
+function disableCardsInHand(exceptCards){
+	for(let card of document.getElementById("hand").childNodes){
+		if(exceptCards.indexOf(card.classList[0]) == -1){
+			card.setAttribute("disabled", true)
+		}
+	}
+}
