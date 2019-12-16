@@ -11,6 +11,10 @@ $deck-left: 0;
     :nth-child(2){
         top: 5px;
     }
+
+    &[disabled=true]{
+      filter: brightness(70%);
+    }
 }
 
 #hand{

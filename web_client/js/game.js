@@ -21,13 +21,19 @@ document.querySelector(".discardPile").ondragleave = (e) => {
 document.querySelector(".discardPile").ondrop = (e) => {
     e.preventDefault();
 	var droppedCard = e.dataTransfer.getData("application/coder-card");
-	if(cardTypes.indexOf(droppedCard) != -1){
-		ws.send(`ADD_CARDS\0["${droppedCard}"]`);
-	}
+	console.log(droppedCard)
+	if(droppedCard != "NotInTurn"){
+		if(cardTypes.indexOf(droppedCard) != -1){
+			ws.send(`ADD_CARDS\0["${droppedCard}"]`);
+		}
 
-    document.querySelector("#draggedCard").remove();
-    document.querySelector(".discardPile").classList.remove("highlight");
-    reloadScrollbar("hand");
+		document.querySelector("#draggedCard").remove();
+		reloadScrollbar("hand");
+	}else{
+		alert("No es tu turno.")
+	}
+	
+	document.querySelector(".discardPile").classList.remove("highlight");
 };
 
 document.querySelector(".deck").onclick = (e) => {
