@@ -1,17 +1,37 @@
 document.querySelector("#username").innerText = getCookie("EXPLODINGNAUTS_USER");
 
-for (let el of document.querySelectorAll("card:not(.fake):not(.hidden)")) {
-	dragElement(el);
-}
-
 document.querySelector(".stackHandInfo.error").style.visibility = "hidden";
 document.querySelector(".stackHandInfo.correct").style.visibility = "hidden";
 
 document.querySelector("#hand").onwheel = scrollableElement;
 document.querySelector("#defused_cards").onwheel = scrollableElement;
 document.querySelector("#putMultiple").onclick = pushToStack;
+
+document.querySelector(".discardPile").ondragover = (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    document.querySelector(".discardPile").classList.add("highlight");
+};
+
+document.querySelector(".discardPile").ondragleave = (e) => {
+    e.preventDefault();
+    document.querySelector(".discardPile").classList.remove("highlight");
+};
+
+document.querySelector(".discardPile").ondrop = (e) => {
+    e.preventDefault();
+	var droppedCard = e.dataTransfer.getData("application/coder-card");
+	if(cardTypes.indexOf(droppedCard) != -1){
+		ws.send(`ADD_CARDS\0["${droppedCard}"]`);
+	}
+
+    document.querySelector("#draggedCard").remove();
+    document.querySelector(".discardPile").classList.remove("highlight");
+    reloadScrollbar("hand");
+};
+
 document.querySelector(".deck").onclick = (e) => {
-	if (document.querySelector(".deck").hasAttribute("disabled")) {
+	if (document.querySelector(".deck").disabled) {
 		e.preventDefault();
 		e.stopPropagation();
 		return false;
@@ -45,7 +65,6 @@ document.querySelector("#defused_ok").onclick = (e) => {
 
 	hand.splice(getHandCardIndex("ExplodingKitten"),1);
 	hand.splice(getHandCardIndex("Defuse"),1);
-	reloadHand();
+	reloadScrollbar("hand")
 	ws.send(`ADD_CARDS\0["Defuse"]`);
-	redrawStack();
 };

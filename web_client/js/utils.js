@@ -1,25 +1,13 @@
-function redrawStack() {
-	let stack = document.querySelector(".stack");
-	stack.innerHTML = "";
-	let z = cardZIndex;
-	stack.appendChild(stackSnapCard);
-	for (let card of cardsInStack) {
-		stack.appendChild(card);
-		card.style.zIndex = z;
-		z++;
-	}
+function createCard(cardname) {
+    let card = document.querySelector("card.template."+cardname).cloneNode();
+    card.innerText = document.querySelector("card.template."+cardname).innerText;
+    return card;
 }
 
-function redrawStackHand() {
-	let stack = document.querySelector(".stackHand");
-	stack.innerHTML = "";
-	let z = cardZIndex;
-	stack.appendChild(stackHandSnapCard);
-	for (let card of cardsInStackHand) {
-		stack.appendChild(card);
-		card.style.zIndex = z;
-		z++;
-	}
+function reloadScrollbar(prefix) {
+    let elmnt = document.getElementById(prefix);
+    let scrollbar = document.querySelector(`.scrollRect#${prefix}_scroll`);
+	calcElementWidth(elmnt, scrollbar);
 }
 
 function getStackHandInfo() {
@@ -50,152 +38,6 @@ function getStackHandInfo() {
 	return canPush;
 }
 
-//Original from https://www.kirupa.com/html5/drag.htm
-function dragElement(elmnt) {
-	elmnt.isDraggable = true;
-	let container = elmnt.parentElement;
-
-	let active = false;
-	let currentX;
-	let currentY;
-	let initialX;
-	let initialY;
-	let xOffset = 0;
-	let yOffset = 0;
-
-	container.addEventListener("mousedown", dragStart, false);
-	container.addEventListener("mouseup", dragEnd, false);
-	container.addEventListener("mousemove", drag, false);
-
-	function dragStart(e) {
-		if (elmnt.hasAttribute("disabled")) return false;
-		if (e.type === "touchstart") {
-			initialX = e.touches[0].clientX - xOffset;
-			initialY = e.touches[0].clientY - yOffset;
-		} else {
-			initialX = e.clientX - xOffset;
-			initialY = e.clientY - yOffset;
-		}
-
-		if (e.target === elmnt) {
-			active = true;
-		}
-
-	}
-
-	function dragEnd(e) {
-		if (active) {
-			let elmnt_pos = elmnt.getBoundingClientRect()
-			let snapped = false;
-			for (let snapEl of snapElements) {
-				let snap_pos = snapEl.getBoundingClientRect()
-				if (Math.abs(elmnt_pos.x - snap_pos.x) < 100 && Math.abs(elmnt_pos.y - snap_pos.y) < 100) {
-					snapped = true;
-					currentX += snap_pos.x - elmnt_pos.x
-					currentY += snap_pos.y - elmnt_pos.y
-					setTranslate(currentX, currentY, elmnt);
-					snapEl.classList.add('vis_hidden')
-					//console.log(currentX, currentY)
-
-					if (snapEl.id == "stackSnap") {
-						// /*elmnt.style.transform = "";
-						// elmnt.style.transform += "rotate("+(Math.random()-0.5)*20+"deg)";
-						// elmnt.classList.remove("relative");
-						// cardsInStack.push(elmnt);*/
-						let messageToSend = [elmnt.classList[0]];
-						ws.send(`ADD_CARDS\0${JSON.stringify(messageToSend)}`);
-						hand.splice(hand.indexOf(elmnt), 1);
-						reloadHand();
-						//delete elmnt
-
-						//redrawStack();
-					} else if (snapEl.id == "stackHandSnap") {
-						elmnt.style.transform = "";
-						elmnt.style.transform += "rotate(" + (Math.random() - 0.5) * 20 + "deg)";
-						elmnt.classList.remove("relative");
-						cardsInStackHand.push(elmnt);
-						hand.splice(hand.indexOf(elmnt), 1);
-						redrawStackHand();
-						let canPush = getStackHandInfo();
-						if (canPush) {
-							document.querySelector("#putMultiple").onclick = pushToStack;
-						} else {
-							xOffset = 0;
-							yOffset = 0;
-							document.querySelector("#putMultiple").onclick = pushToHand;
-						}
-					}
-					if (document.querySelector("#hand").lastChild) {
-						handScrollPos += document.querySelector("#hand").lastChild.getBoundingClientRect().width;
-						handScroll({ deltaY: 0 });
-					}
-				}
-			}
-			if (!snapped) {
-				elmnt.style.transform = "";
-				xOffset = 0;
-				yOffset = 0;
-			}
-
-			// document.querySelector("#hand").style.overflowX = "auto";
-
-			initialX = currentX;
-			initialY = currentY;
-
-			active = false;
-		}
-	}
-
-	function drag(e) {
-		if (active) {
-
-			e.preventDefault();
-
-			if (e.type === "touchmove") {
-				currentX = e.touches[0].clientX - initialX;
-				currentY = e.touches[0].clientY - initialY;
-			} else {
-				currentX = e.clientX - initialX;
-				currentY = e.clientY - initialY;
-			}
-
-			xOffset = currentX;
-			yOffset = currentY;
-
-			// document.querySelector("#hand").style.overflowX = "visible";
-
-			// TODO snap to hand & stack
-
-			let elmnt_pos = elmnt.getBoundingClientRect()
-			for (let snapEl of snapElements) {
-				let snap_pos = snapEl.getBoundingClientRect()
-				if (Math.abs(elmnt_pos.x - snap_pos.x) < 100 && Math.abs(elmnt_pos.y - snap_pos.y) < 100) {
-					snapEl.classList.remove('vis_hidden')
-				} else {
-					snapEl.classList.add('vis_hidden')
-				}
-			}
-
-			setTranslate(currentX, currentY, elmnt);
-		}
-	}
-
-	function setTranslate(xPos, yPos, el) {
-		// console.log(xPos, yPos)
-		el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
-	}
-}
-
-function reloadHand() {
-	document.querySelector("#hand").innerHTML = "";
-	let lastCard;
-	for (let card of hand) {
-		document.querySelector("#hand").appendChild(card);
-		lastCard = card;
-	}
-	calcElementWidth(document.querySelector("#hand"), scrollRect)
-}
-
 function pushToStack() {
 	if (document.querySelector("#putMultiple").hasAttribute("disabled")) {
 		e.preventDefault();
@@ -209,8 +51,6 @@ function pushToStack() {
 	ws.send(`ADD_CARDS\0${JSON.stringify(messageToSend)}`);
 	//cardsInStack=cardsInStack.concat(cardsInStackHand);
 	cardsInStackHand = [];
-	redrawStackHand();
-	//redrawStack();
 	getStackHandInfo();
 };
 
@@ -226,8 +66,7 @@ function pushToHand() {
 	}
 	hand = hand.concat(cardsInStackHand);
 	cardsInStackHand = [];
-	redrawStackHand();
-	reloadHand();
+    reloadScrollbar("hand");
 	getStackHandInfo();
 };
 
@@ -235,20 +74,6 @@ function isOffscreen(elmnt) {
 	if(!elmnt) return false;
 	let pos = elmnt.getBoundingClientRect();
 	return pos.x < 0 || pos.y < 0 || pos.x + pos.width > window.innerWidth || pos.y + pos.height > window.innerHeight;
-}
-
-function handScroll(e) {
-	if (isOffscreen(document.querySelector("#hand").lastChild)) {
-		handScrollPos += e.deltaY / 2.5;
-	} else if (e.deltaY > 0) {
-		handScrollPos += e.deltaY / 2.5;
-	}
-	let lastChildPos = document.querySelector("#hand").lastChild.getBoundingClientRect();
-	if (handScrollPos > 0) {
-		handScrollPos = 0
-	}
-	document.querySelector("#hand").style.left = handScrollPos + "px";
-	scrollRect.style.left = Math.abs(handScrollPos) * window.innerWidth / handWidth + "px"
 }
 
 function scrollableElement(e) {
@@ -351,21 +176,21 @@ function getCardById(id){
 	return card;
 }
 
-function refreshScroll(elmnt){
-	elmnt.style.left = elmnt.scrollPos + "px";
-	
-	let elmntPrefix = elmnt.id.indexOf("_") == -1 ? elmnt.id : elmnt.id.substring(0, elmnt.id.indexOf("_"));
-	let scrollbar = document.querySelector(`.scrollRect#${elmntPrefix}_scroll`);
-	scrollbar.style.left = Math.abs(elmnt.scrollPos) * window.innerWidth / elmnt.width + "px"
-}
-
 function populatePeopleModal(){
-	document.querySelector("#people_list").innerHTML = "";
+	document.getElementById("people_list").innerHTML = "";
 	playerList.sort();
 	for(let player of playerList){
 		let playerLi = document.createElement("li");
 		playerLi.innerText = player;
-		document.querySelector("#people_list").appendChild(playerLi);
+		document.getElementById("people_list").appendChild(playerLi);
+	}
+	for(let spectator of spectatorList){
+		let spectatorLi = document.createElement("li");
+		spectatorLi.innerText = spectator;
+		spectatorLi.style.color = "#ccc";
+		spectatorLi.style.fontStyle = "italic";
+		spectatorLi.classList = "spectator";
+		document.getElementById("people_list").appendChild(spectatorLi);
 	}
 }
 
@@ -374,5 +199,11 @@ function disableCardsInHand(exceptCards){
 		if(exceptCards.indexOf(card.classList[0]) == -1){
 			card.setAttribute("disabled", true)
 		}
+	}
+}
+
+function enableHand() {
+	for(let card of document.getElementById("hand").childNodes){
+		card.removeAttribute("disabled")
 	}
 }

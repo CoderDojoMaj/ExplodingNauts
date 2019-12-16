@@ -13,14 +13,13 @@ ws.onmessage = (data) => {
 			console.log(arr)
 			let cardArr = []
 			for (let className of arr) {
-				let card = document.querySelector("." + className + ".template").cloneNode(true);
-				card.classList.remove("hidden")
-				card.classList.remove("template");
-				card.style.transform += "rotate(" + (Math.random() - 0.5) * 20 + "deg)";
-				cardArr.push(card);
+				var addedCard = createCard(className);
+				addedCard.classList.remove("template");
+				addedCard.classList.remove("hidden");
+				addedCard.style.transform = "rotate("+(Math.random()-0.5)*45+"deg)";
+				document.querySelector(".discardPile").appendChild(addedCard);
 			}
 			cardsInStack = cardsInStack.concat(cardArr)
-			redrawStack()
 			break;
 		case 'USER_LIST':
 			playerList=JSON.parse(messageData)
@@ -37,13 +36,26 @@ ws.onmessage = (data) => {
 			populatePeopleModal();
 			break;
 		case "DRAW_CARD":
-			let card = document.querySelector("." + cardTypes[parseInt(messageData)] + ".template").cloneNode(true);
-			card.classList.remove("hidden");
+			let card = createCard(cardTypes[parseInt(messageData)]);
 			card.classList.remove("template");
+			card.classList.remove("hidden");
 			card.classList.add("relative");
-			hand.unshift(card);
-			reloadHand();
-			dragElement(card)
+			card.draggable = true;
+			document.getSelection().empty();
+			card.ondragstart = (e) => {
+				e.dataTransfer.setData("application/coder-card", e.target.classList[0]);
+				if(document.querySelector("#draggedCard"))
+					document.querySelector("#draggedCard").id = "";
+				e.target.id = "draggedCard";
+				e.dataTransfer.dropEffect = "move";
+			};
+
+			card.ondragend = (e) => {
+				if(document.querySelector("#draggedCard"))
+					document.querySelector("#draggedCard").id = "";
+			};
+			document.querySelector(".hand").appendChild(card);
+			reloadScrollbar("hand");
 
 			if (card.classList.contains("ExplodingKitten") && handContainsCard("Defuse")) {
 				ws.send("GET_DECK\0 ");
@@ -74,6 +86,21 @@ ws.onmessage = (data) => {
 			break;
 		case "ACTUAL_DECK":
 			localDeck = JSON.parse(messageData);
+			break;
+		case 'ACTIVATE':
+			enableHand();
+			document.querySelector(".deck").disabled = false;
+			break;
+		case 'DEACTIVATE':
+			disableCardsInHand(["Nope"]);
+			document.querySelector(".deck").disabled = true;
+			break;
+		case 'SPECTATE':
+			addClassToAll(document.querySelector("body"), "darken", true, true, "");
+			removeClassFromAll(document.querySelector("body"), "darken", false, "");
+			if(spectatorList.indexOf(messageData) == -1)
+				spectatorList.push(messageData)
+			populatePeopleModal()
 			break;
 	}
 }

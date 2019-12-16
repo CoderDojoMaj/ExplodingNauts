@@ -19,3 +19,4 @@ var cardTypes = ["ExplodingKitten", "Attack", "Defuse", "Nope", "SeeTheFuture", 
 var cardNames = ["Exploding Kitten", "Attack", "Defuse", "Nope", "See The Future (x3)", "Skip", "Favor", "Shuffle", "Rainbow Cat", "Hairy Potato Cat", "Tacocat", "Beard Cat", "Cattermelon"];
 
 var playerList = [];
+var spectatorList = [];

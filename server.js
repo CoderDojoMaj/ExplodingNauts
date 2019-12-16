@@ -90,9 +90,7 @@ let websocketServer = new ws.Server({ server });
 let connections = {}
 let deck = [];
 let turn = 0;
-let turnOrder = 0;
-let startTimer = 30;
-let timerStarted = false;
+let turnOrder = 1;
 let cardIds = {
     explodingKitten: 0,
     attack: 1,
@@ -108,6 +106,7 @@ let cardIds = {
     beardCat: 11,
     cattermelon: 12
 };
+let acceptConnections = true;
 
 websocketServer.on('connection', ws => {
     let user;
@@ -120,19 +119,29 @@ websocketServer.on('connection', ws => {
                 if (Object.keys(connections).length == 0) {
                     deck=[];
                     generateDeck();
+                    acceptConnections = true;
                 }
-                connections[data] = ws
-                ws.send(`USER_LIST\0${JSON.stringify(Object.keys(connections))}`)
-                for (let connection of Object.values(connections)) {
-                    if(connection != ws)
-                        connection.send(`NEW_USER\0${data}`)
-                }
-                
+
                 user = data;
-                timerStarted = true;
-                connections[user].send(`DRAW_CARD\0${cardIds.defuse}`)
+
+                connections[user] = ws
+                ws.send(`USER_LIST\0${JSON.stringify(Object.keys(connections))}`)
+                if(acceptConnections){
+                    for (let connection of Object.values(connections)) {
+                        if(connection != ws)
+                            connection.send(`NEW_USER\0${data}`)
+                    }
+                    
+                    connections[user].send(`DRAW_CARD\0${cardIds.defuse}`)
+                    if(Object.values(connections).length > 1){
+                        connections[user].send(`DEACTIVATE\0 `)
+                    }
+                }else{
+                    connections[user].send(`SPECTATE\0 `)
+                }
                 break;
             case 'ADD_CARDS':
+                if(acceptConnections) acceptConnections = false;
                 for (let username in connections) {
                     connections[username].send(`ADD_CARDS\0${data}`)
                 }
@@ -145,8 +154,22 @@ websocketServer.on('connection', ws => {
                 }
                 break;
             case 'DRAW_CARD':
+                if (acceptConnections) acceptConnections = false;
                 connections[user].send(`DRAW_CARD\0${deck.shift()}`)
-                turn++;
+                turn+=turnOrder;
+                let tmpturn = turn;
+                connectionNames = Object.keys(connections);
+                if (turn<0){
+                    tmpturn = connectionNames.length+turn;
+                }
+                console.log(turn,connectionNames,"TURN TO:",connectionNames[tmpturn%Object.values(connections).length])
+                for(let connection of Object.values(connections)){
+                    if(connections[connectionNames[tmpturn%Object.values(connections).length]] == connection){
+                        connection.send(`ACTIVATE\0 `)
+                    }else{
+                        connection.send(`DEACTIVATE\0 `)
+                    }
+                }
                 break;
             case "GET_DECK":
                 connections[user].send(`ACTUAL_DECK\0${JSON.stringify(deck)}`)
@@ -164,16 +187,6 @@ websocketServer.on('connection', ws => {
             }
         }
     });
-
-    // let timer=setInterval(() => {
-    //     if(timerStarted && startTimer>0){
-    //         startTimer-=1;
-    //         connections[user].send(`STARTING_TIME\0${Math.floor(startTimer)}`)
-    //     }
-    //     if(startTimer<=0){
-    //         clearInterval(this);
-    //     }
-    // },1000)
 });
 
 //["ExplodingKitten", "Attack", "Defuse", "Nope", "SeeTheFuture", "Skip", "Favor", "Shuffle", "RainbowCat", "HairyPotatoCat", "TacoCat", "BeardCat", "Cattermelon"]

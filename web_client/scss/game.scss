@@ -37,7 +37,7 @@ $deck-left: 0;
     bottom: 0;
 }
 
-.stack{
+.discardPile{
     border: 3px dashed #fff;
     position: relative;
     top: 100px;
@@ -48,6 +48,17 @@ $deck-left: 0;
     overflow: visible;
     z-index: 0;
     padding: 0;
+
+    &.highlight {
+        &::after {
+            content: "";
+            display: inline-block;
+            border: 3px dashed #0a0;
+            width: 170px;
+            height: 230px;
+            padding: 0;
+        }
+    }
 }
 
 .stackHand{

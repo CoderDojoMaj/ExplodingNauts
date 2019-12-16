@@ -102,4 +102,8 @@ card {
   &.TacoCat{
     @include image("tacocat.png");
   }
+
+  &#draggedCard {
+    filter: opacity(0.5);
+  }
 }
