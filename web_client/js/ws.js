@@ -59,6 +59,7 @@ ws.onmessage = (data) => {
 					document.querySelector("#draggedCard").id = "";
 			};
 			document.querySelector(".hand").appendChild(card);
+			hand.push(card)
 			reloadScrollbar("hand");
 
 			if (card.classList.contains("ExplodingKitten") && handContainsCard("Defuse")) {
@@ -93,11 +94,11 @@ ws.onmessage = (data) => {
 			break;
 		case 'ACTIVATE':
 			enableHand();
-			document.querySelector(".deck").setAttribute("disabled", true)
+			document.querySelector(".deck").removeAttribute("disabled")
 			break;
 		case 'DEACTIVATE':
 			disableCardsInHand(["Nope"]);
-			document.querySelector(".deck").removeAttribute("disabled")
+			document.querySelector(".deck").setAttribute("disabled", true)
 			break;
 		case 'SPECTATE':
 			addClassToAll(document.querySelector("body"), "darken", true, true, "");
@@ -105,6 +106,7 @@ ws.onmessage = (data) => {
 			if(spectatorList.indexOf(messageData) == -1)
 				spectatorList.push(messageData)
 			populatePeopleModal()
+			document.querySelector(".deck").setAttribute("disabled", true)
 			break;
 	}
 }

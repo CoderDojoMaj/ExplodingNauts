@@ -21,7 +21,6 @@ document.querySelector(".discardPile").ondragleave = (e) => {
 document.querySelector(".discardPile").ondrop = (e) => {
     e.preventDefault();
 	var droppedCard = e.dataTransfer.getData("application/coder-card");
-	console.log(droppedCard)
 	if(droppedCard != "NotInTurn"){
 		if(cardTypes.indexOf(droppedCard) != -1){
 			ws.send(`ADD_CARDS\0["${droppedCard}"]`);
@@ -32,12 +31,12 @@ document.querySelector(".discardPile").ondrop = (e) => {
 	}else{
 		alert("No es tu turno.")
 	}
-	
+
 	document.querySelector(".discardPile").classList.remove("highlight");
 };
 
 document.querySelector(".deck").onclick = (e) => {
-	if (document.querySelector(".deck").disabled) {
+	if (document.querySelector(".deck").hasAttribute("disabled")) {
 		e.preventDefault();
 		e.stopPropagation();
 		return false;
@@ -69,7 +68,9 @@ document.querySelector("#defused_ok").onclick = (e) => {
 	localDeck.splice(ek_index,0,0)
 	ws.send(`SET_DECK\0${JSON.stringify(localDeck)}`);
 
+	document.querySelector(".hand").children[getHandCardIndex("ExplodingKitten")].remove();
 	hand.splice(getHandCardIndex("ExplodingKitten"),1);
+	document.querySelector(".hand").children[getHandCardIndex("Defuse")].remove();
 	hand.splice(getHandCardIndex("Defuse"),1);
 	reloadScrollbar("hand")
 	ws.send(`ADD_CARDS\0["Defuse"]`);

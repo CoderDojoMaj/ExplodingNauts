@@ -88,6 +88,8 @@ let server = require('http').createServer(app);
 let websocketServer = new ws.Server({ server });
 
 let connections = {}
+let players = {}
+let spectators = {}
 let deck = [];
 let turn = 0;
 let turnOrder = 1;
@@ -127,6 +129,7 @@ websocketServer.on('connection', ws => {
                 connections[user] = ws
                 ws.send(`USER_LIST\0${JSON.stringify(Object.keys(connections))}`)
                 if(acceptConnections){
+                    players[user] = connections[user];
                     for (let connection of Object.values(connections)) {
                         if(connection != ws)
                             connection.send(`NEW_USER\0${data}`)
@@ -138,7 +141,10 @@ websocketServer.on('connection', ws => {
                     }
                 }else{
                     connections[user].send(`SPECTATE\0 `)
+                    spectators[user] = connections[user];
                 }
+                console.log("PLAYERS:",Object.keys(players))
+                console.log("SPECTATORS:",Object.keys(spectators))
                 break;
             case 'ADD_CARDS':
                 if(acceptConnections) acceptConnections = false;
@@ -158,16 +164,16 @@ websocketServer.on('connection', ws => {
                 connections[user].send(`DRAW_CARD\0${deck.shift()}`)
                 turn+=turnOrder;
                 let tmpturn = turn;
-                connectionNames = Object.keys(connections);
+                playerNames = Object.keys(players);
                 if (turn<0){
-                    tmpturn = connectionNames.length+turn;
+                    tmpturn = playerNames.length+turn;
                 }
-                console.log(turn,connectionNames,"TURN TO:",connectionNames[tmpturn%Object.values(connections).length])
-                for(let connection of Object.values(connections)){
-                    if(connections[connectionNames[tmpturn%Object.values(connections).length]] == connection){
-                        connection.send(`ACTIVATE\0 `)
+                console.log(turn,playerNames,"TURN TO:",playerNames[tmpturn%Object.values(players).length])
+                for(let player of Object.values(players)){
+                    if(players[playerNames[tmpturn%Object.values(players).length]] == player){
+                        player.send(`ACTIVATE\0 `)
                     }else{
-                        connection.send(`DEACTIVATE\0 `)
+                        player.send(`DEACTIVATE\0 `)
                     }
                 }
                 break;
@@ -182,6 +188,8 @@ websocketServer.on('connection', ws => {
     ws.on('close', () => {
         if (user) {
             delete connections[user];
+            delete players[user];
+            delete spectators[user];
             for (let connection of Object.values(connections)) {
                 connection.send(`USER_DISCONNECTED\0${user}`)
             }

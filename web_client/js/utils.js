@@ -4,9 +4,10 @@ function createCard(cardname) {
     return card;
 }
 
-function reloadScrollbar(prefix) {
-    let elmnt = document.getElementById(prefix);
-    let scrollbar = document.querySelector(`.scrollRect#${prefix}_scroll`);
+function reloadScrollbar(id) {
+	let prefix = id.indexOf("_") == -1 ? id : id.substring(0, id.indexOf("_"));
+    let elmnt = document.getElementById(id);
+	let scrollbar = document.querySelector(`.scrollRect#${prefix}_scroll`);
 	calcElementWidth(elmnt, scrollbar);
 }
 

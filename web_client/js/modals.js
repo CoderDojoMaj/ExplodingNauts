@@ -10,7 +10,6 @@ function openPeopleModal(){
 
 function showDefuseModal() {
 	document.getElementById("defused_cards").scrollPos=0;
-	refreshScroll(document.getElementById("defused_cards"));
 	addClassToAll(document.querySelector("body"), "darken", true, true, "defused");
 	document.getElementById("defused_ok").setAttribute("disabled", true)
 	for (let cardId of localDeck) {
@@ -21,6 +20,7 @@ function showDefuseModal() {
 		backCard.innerText="\0"; // So that the exploding kitten appears aligned.
 		document.getElementById("defused_cards").appendChild(backCard);
 	}
+	reloadScrollbar("defused_cards");
 	document.getElementById("defused_modal").classList.remove("hidden");
 	let defusedCardPos=document.getElementById("defused_cards").getBoundingClientRect();
 	calcElementWidth(document.getElementById("defused_cards"), document.getElementById("defused_scroll"));
