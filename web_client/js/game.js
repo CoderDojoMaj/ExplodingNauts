@@ -131,7 +131,7 @@ document.querySelector("#twocat_ok").onclick = (e) => {
 		return false;
 	}
 	let cardIndex = getChildIndex(document.getElementById("twocat_cards"),document.querySelector(".Back.selected"));	
-	let cardType = document.querySelector(".Back.selected").getAttribute("originalCard");
+	let cardType = document.querySelector(".Back.selected").originalCard;
 	ws.send(`STEAL_CARD\0["${selectedPlayer}",${cardIndex},"${cardType}"]`);
 	removeClassFromAll(document.querySelector("body"), "darken", true, "twocat");
 	document.getElementById("twocat_modal").classList.add("hidden")

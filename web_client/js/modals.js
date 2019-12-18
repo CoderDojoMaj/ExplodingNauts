@@ -82,7 +82,7 @@ function twoCatModal(hand){
 					document.querySelector("card.Back.selected").classList.remove("selected");
 			e.target.classList.add("selected");
 		}
-		backCard.setAttribute("originalCard",cardClass)
+		backCard.originalCard=cardClass
 		document.getElementById("twocat_cards").appendChild(backCard);
 	}
 	document.getElementById("twocat_modal").classList.remove("hidden");
