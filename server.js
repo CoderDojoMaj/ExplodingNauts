@@ -151,7 +151,7 @@ websocketServer.on('connection', ws => {
                 for (let username in connections) {
                     connections[username].send(`ADD_CARDS\0${data}`)
                 }
-                if(data.indexOf("SeeTheFuture")!=-1){
+                if(data[0] == "SeeTheFuture" && data.length == 1){
                     let list = [];
                     for (let i = 0; i < 3; i++) {
                         list.push(deck[i])

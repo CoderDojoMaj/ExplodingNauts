@@ -48,6 +48,7 @@ function pushToStack() {
 	let messageToSend = [];
 	for (let card of cardsInStackHand) {
 		messageToSend.push(card.classList[0]);
+		document.querySelector(".stackHand").children[0].remove();
 	}
 	ws.send(`ADD_CARDS\0${JSON.stringify(messageToSend)}`);
 	//cardsInStack=cardsInStack.concat(cardsInStackHand);
@@ -62,8 +63,12 @@ function pushToHand() {
 		return false;
 	}
 	for (let card of cardsInStackHand) {
+		document.querySelector(".stackHand").children[0].remove();
 		card.style.transform = "";
 		card.classList.add("relative");
+		card.draggable = true;
+		card.ondragstart = cardDragStart;
+		document.querySelector(".hand").appendChild(card)
 	}
 	hand = hand.concat(cardsInStackHand);
 	cardsInStackHand = [];
@@ -208,3 +213,15 @@ function enableHand() {
 		card.removeAttribute("disabled")
 	}
 }
+
+function cardDragStart(e) {
+	if(e.target.getAttribute("disabled") == "true"){
+		e.dataTransfer.setData("application/coder-card", "NotInTurn");
+	}else{
+		e.dataTransfer.setData("application/coder-card", e.target.classList[0]);
+	}
+	if(document.querySelector("#draggedCard"))
+		document.querySelector("#draggedCard").id = "";
+	e.target.id = "draggedCard";
+	e.dataTransfer.dropEffect = "move";
+};

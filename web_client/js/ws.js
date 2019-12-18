@@ -42,17 +42,7 @@ ws.onmessage = (data) => {
 			card.classList.add("relative");
 			card.draggable = true;
 			document.getSelection().empty();
-			card.ondragstart = (e) => {
-				if(e.target.getAttribute("disabled") == "true"){
-					e.dataTransfer.setData("application/coder-card", "NotInTurn");
-				}else{
-					e.dataTransfer.setData("application/coder-card", e.target.classList[0]);
-				}
-				if(document.querySelector("#draggedCard"))
-					document.querySelector("#draggedCard").id = "";
-				e.target.id = "draggedCard";
-				e.dataTransfer.dropEffect = "move";
-			};
+			card.ondragstart = cardDragStart;
 
 			card.ondragend = (e) => {
 				if(document.querySelector("#draggedCard"))
@@ -95,10 +85,12 @@ ws.onmessage = (data) => {
 		case 'ACTIVATE':
 			enableHand();
 			document.querySelector(".deck").removeAttribute("disabled")
+			document.querySelector("#putMultiple").removeAttribute("disabled")
 			break;
 		case 'DEACTIVATE':
 			disableCardsInHand(["Nope"]);
 			document.querySelector(".deck").setAttribute("disabled", true)
+			document.querySelector("#putMultiple").setAttribute("disabled", true)
 			break;
 		case 'SPECTATE':
 			addClassToAll(document.querySelector("body"), "darken", true, true, "");

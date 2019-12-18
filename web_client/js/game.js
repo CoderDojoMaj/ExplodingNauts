@@ -3,9 +3,49 @@ document.querySelector("#username").innerText = getCookie("EXPLODINGNAUTS_USER")
 document.querySelector(".stackHandInfo.error").style.visibility = "hidden";
 document.querySelector(".stackHandInfo.correct").style.visibility = "hidden";
 
+document.querySelector("#putMultiple").onclick = (e) => {
+	let canPush = getStackHandInfo();
+	if(canPush){
+		pushToStack();
+	}else{
+		pushToHand();
+	}
+}
+
+document.querySelector(".stackHand").ondragover = (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    document.querySelector(".stackHand").classList.add("highlight");
+};
+
+document.querySelector(".stackHand").ondragleave = (e) => {
+    e.preventDefault();
+    document.querySelector(".stackHand").classList.remove("highlight");
+};
+
+document.querySelector(".stackHand").ondrop = (e) => {
+    e.preventDefault();
+	var droppedCard = e.dataTransfer.getData("application/coder-card");
+	if(cardTypes.indexOf(droppedCard) != -1){
+		let card = createCard(droppedCard);
+		cardsInStackHand.push(card);
+		getStackHandInfo();
+		card.classList.remove("template");
+		card.classList.remove("hidden");
+		card.style.transform = "rotate("+(Math.random()-0.5)*45+"deg)";
+		document.querySelector(".stackHand").appendChild(card);
+
+		document.querySelector("#draggedCard").remove();
+		reloadScrollbar("hand");
+	}else if(droppedCard == "NotInTurn"){
+		alert("No es tu turno.")
+	}
+
+	document.querySelector(".stackHand").classList.remove("highlight");
+};
+
 document.querySelector("#hand").onwheel = scrollableElement;
 document.querySelector("#defused_cards").onwheel = scrollableElement;
-document.querySelector("#putMultiple").onclick = pushToStack;
 
 document.querySelector(".discardPile").ondragover = (e) => {
     e.preventDefault();
@@ -21,14 +61,14 @@ document.querySelector(".discardPile").ondragleave = (e) => {
 document.querySelector(".discardPile").ondrop = (e) => {
     e.preventDefault();
 	var droppedCard = e.dataTransfer.getData("application/coder-card");
-	if(droppedCard != "NotInTurn"){
+	if(cardTypes.indexOf(droppedCard) != -1){
 		if(cardTypes.indexOf(droppedCard) != -1){
 			ws.send(`ADD_CARDS\0["${droppedCard}"]`);
 		}
 
 		document.querySelector("#draggedCard").remove();
 		reloadScrollbar("hand");
-	}else{
+	}else if(droppedCard == "NotInTurn"){
 		alert("No es tu turno.")
 	}
 
