@@ -122,11 +122,7 @@ websocketServer.on('connection', ws => {
                     deck=[];
                     generateDeck();
                     acceptConnections = true
-
-                    ws.send(`CARD_GOTTEN\0TacoCat`)
-                    ws.send(`CARD_GOTTEN\0TacoCat`)
                 }
-                ws.send(`CARD_GOTTEN\0Skip`)
 
                 user = data;
 
