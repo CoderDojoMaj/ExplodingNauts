@@ -35,6 +35,7 @@ document.querySelector(".stackHand").ondrop = (e) => {
 		card.style.transform = "rotate("+(Math.random()-0.5)*45+"deg)";
 		document.querySelector(".stackHand").appendChild(card);
 
+		hand.splice(getHandCardIndex(document.querySelector("#draggedCard").classList[0]),1);
 		document.querySelector("#draggedCard").remove();
 		reloadScrollbar("hand");
 	}else if(droppedCard == "NotInTurn"){
@@ -46,6 +47,8 @@ document.querySelector(".stackHand").ondrop = (e) => {
 
 document.querySelector("#hand").onwheel = scrollableElement;
 document.querySelector("#defused_cards").onwheel = scrollableElement;
+document.querySelector("#twocat_cards").onwheel = scrollableElement;
+document.querySelector("#threecat_cards").onwheel = scrollableElement;
 
 document.querySelector(".discardPile").ondragover = (e) => {
     e.preventDefault();
@@ -66,6 +69,7 @@ document.querySelector(".discardPile").ondrop = (e) => {
 			ws.send(`ADD_CARDS\0["${droppedCard}"]`);
 		}
 
+		hand.splice(getHandCardIndex(document.querySelector("#draggedCard").classList[0]),1);
 		document.querySelector("#draggedCard").remove();
 		reloadScrollbar("hand");
 	}else if(droppedCard == "NotInTurn"){
@@ -114,4 +118,22 @@ document.querySelector("#defused_ok").onclick = (e) => {
 	hand.splice(getHandCardIndex("Defuse"),1);
 	reloadScrollbar("hand")
 	ws.send(`ADD_CARDS\0["Defuse"]`);
+};
+
+document.getElementById("people").onclick = openPeopleModal;
+
+document.getElementById("people_ok").onclick = closePeopleModal;
+
+document.querySelector("#twocat_ok").onclick = (e) => {
+	if (document.querySelector("#twocat_ok").hasAttribute("disabled")) {
+		e.preventDefault();
+		e.stopPropagation();
+		return false;
+	}
+	let cardIndex = getChildIndex(document.getElementById("twocat_cards"),document.querySelector(".Back.selected"));	
+	let cardType = document.querySelector(".Back.selected").getAttribute("originalCard");
+	ws.send(`STEAL_CARD\0["${selectedPlayer}",${cardIndex},"${cardType}"]`);
+	removeClassFromAll(document.querySelector("body"), "darken", true, "twocat");
+	document.getElementById("twocat_modal").classList.add("hidden")
+	document.getElementById("twocat_cards").innerHTML = '';
 };

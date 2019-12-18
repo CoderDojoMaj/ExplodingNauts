@@ -100,6 +100,58 @@ ws.onmessage = (data) => {
 			populatePeopleModal()
 			document.querySelector(".deck").setAttribute("disabled", true)
 			break;
+		case 'COMBO':
+			if(messageData == "C2Cat") {
+				openPeopleModal("C2Cat");
+			}else if(messageData == "C3Cat") {
+				openPeopleModal("C3Cat");
+			}else if(messageData == "C5Cards") {
+				//Make 5 cards work
+			}
+			break;
+		case 'HAND_REQUEST':
+			let dataList = JSON.parse(messageData);
+			let requestedBy = dataList[0];
+			let reason = dataList[1];
+			let handCardClasses = [];
+			for(let card of hand){
+				handCardClasses.push(card.classList[0]);
+			}
+			ws.send(`ANS_HAND_REQUEST\0["${requestedBy}","${reason}",${JSON.stringify(handCardClasses)}]`)
+			break;
+		case 'ANS_HAND_REQUEST':
+			let ansdataList = JSON.parse(messageData);
+			let anshand = ansdataList[0];
+			console.log(anshand)
+			let ansreason = ansdataList[1];
+			if(ansreason == "C2Cat") {
+				twoCatModal(anshand);
+			}else if(ansreason == "C3Cat") {
+				//Does not exist at the moment
+				//threeCatModal(anshand);
+			}
+			break;
+		case 'CARD_STOLEN':
+			let cardindex = parseInt(messageData);
+			hand.splice(cardindex,1)
+			document.querySelector(".hand").children[cardindex].remove();
+			break;
+		case 'CARD_GOTTEN':
+			let gottenCard = createCard(messageData);
+			gottenCard.classList.remove("template");
+			gottenCard.classList.remove("hidden");
+			gottenCard.classList.add("relative");
+			gottenCard.draggable = true;
+			gottenCard.ondragstart = cardDragStart;
+
+			gottenCard.ondragend = (e) => {
+				if(document.querySelector("#draggedCard"))
+					document.querySelector("#draggedCard").id = "";
+			};
+			document.querySelector(".hand").appendChild(gottenCard);
+			hand.push(gottenCard)
+			reloadScrollbar("hand");
+			break;
 	}
 }
 

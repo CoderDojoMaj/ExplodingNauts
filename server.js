@@ -121,8 +121,12 @@ websocketServer.on('connection', ws => {
                 if (Object.keys(connections).length == 0) {
                     deck=[];
                     generateDeck();
-                    acceptConnections = true;
+                    acceptConnections = true
+
+                    ws.send(`CARD_GOTTEN\0TacoCat`)
+                    ws.send(`CARD_GOTTEN\0TacoCat`)
                 }
+                ws.send(`CARD_GOTTEN\0Skip`)
 
                 user = data;
 
@@ -151,12 +155,19 @@ websocketServer.on('connection', ws => {
                 for (let username in connections) {
                     connections[username].send(`ADD_CARDS\0${data}`)
                 }
-                if(data[0] == "SeeTheFuture" && data.length == 1){
+                let cards = JSON.parse(data);
+                if(cards[0] == "SeeTheFuture" && cards.length == 1){
                     let list = [];
                     for (let i = 0; i < 3; i++) {
                         list.push(deck[i])
                     }
                     connections[user].send(`ANS_SEETHEFUTURE\0${JSON.stringify(list)}`)
+                }else if(cards[0] == cards[1] && cards.length == 2 && cards[0].indexOf("Cat") != -1){
+                    connections[user].send("COMBO\0C2Cat")
+                }else if(cards[0] == cards[1] && cards[1] == cards[2] && cards.length == 3 && cards[0].indexOf("Cat") != -1){
+                    connections[user].send("COMBO\0C3Cat")
+                }else if([...new Set(cards)].length == 5 && cards.length == 5){
+                    connections[user].send("COMBO\0C5Cards")
                 }
                 break;
             case 'DRAW_CARD':
@@ -183,7 +194,28 @@ websocketServer.on('connection', ws => {
             case "SET_DECK":
                 deck=JSON.parse(data);
                 break;
-        }
+            case "GET_HAND":
+                let dataList = JSON.parse(data);
+                let playerconn = connections[dataList[0]];
+                let reason = dataList[1];
+                playerconn.send(`HAND_REQUEST\0["${user}","${reason}"]`)
+                break;
+            case "ANS_HAND_REQUEST":
+                let ansDataList = JSON.parse(data);
+                let ansplayerconn = connections[ansDataList[0]];
+                let ansreason = ansDataList[1];
+                let hand = JSON.stringify(ansDataList[2]);
+                ansplayerconn.send(`ANS_HAND_REQUEST\0[${hand},"${ansreason}"]`)
+                break;
+            case "STEAL_CARD":
+                let stealDataList = JSON.parse(data);
+                let stealPlayerconn = connections[stealDataList[0]];
+                let cardIndex = stealDataList[1];
+                let cardType = stealDataList[2];
+                stealPlayerconn.send(`CARD_STOLEN\0${cardIndex}`)
+                connections[user].send(`CARD_GOTTEN\0${cardType}`);
+                break;
+    }
     });
     ws.on('close', () => {
         if (user) {

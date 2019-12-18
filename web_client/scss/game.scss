@@ -199,7 +199,7 @@ $deck-left: 0;
     }
 }
 
-#defused_{
+#defused_, #twocat_, #threecat_{
     &modal{
         width: 100vw;
         height: 100vh;
@@ -303,11 +303,20 @@ $deck-left: 0;
 
     &list {
         height: 90%;
+        cursor: pointer;
+        li.selected{
+            color: #080;
+            font-weight: bold;
+        }
     }
 
     &ok {
         border: 1px solid #000;
         background: #59c959;
         padding: 5px 10px;
+        
+        &[disabled=true] {
+          background: #c9c8c8;
+        }
     }
 }

@@ -20,3 +20,7 @@ var cardNames = ["Exploding Kitten", "Attack", "Defuse", "Nope", "See The Future
 
 var playerList = [];
 var spectatorList = [];
+
+var peopleModalReason = "";
+
+var selectedPlayer = "";

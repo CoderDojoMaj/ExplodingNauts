@@ -1,9 +1,30 @@
 function closePeopleModal(){
+	selectedPlayer = document.querySelector("li.selected").innerText;
+	if(peopleModalReason == "C2Cat"){
+		ws.send(`GET_HAND\0["${selectedPlayer}","C2Cat"]`)
+	}else if(peopleModalReason == "C3Cat"){
+		ws.send(`GET_HAND\0["${selectedPlayer}","C3Cat"]`)
+	}else if(peopleModalReason == "Favor"){
+		//TODO: Make favor work
+	}
+
+	if(document.querySelector("li.selected"))
+		document.querySelector("li.selected").classList.remove("selected");
+
 	document.getElementById("people_modal").classList.add("hidden");
 	removeClassFromAll(document.querySelector("body"), "darken", true, "people");
 }
 
-function openPeopleModal(){
+function openPeopleModal(reason){
+	if(reason == "C2Cat" || reason == "C3Cat" || reason == "Favor"){
+		document.querySelector("#people_title").innerText = "Choose a Player";
+		document.querySelector("#people_ok").setAttribute("disabled", true)
+	}else{
+		document.querySelector("#people_title").innerText = "Players";
+		document.querySelector("#people_ok").removeAttribute("disabled")
+	}
+	peopleModalReason = reason;
+
 	addClassToAll(document.querySelector("body"), "darken", true, true, "people");
 	document.getElementById("people_modal").classList.remove("hidden");
 }
@@ -45,6 +66,28 @@ function showDefuseModal() {
 	}
 }
 
-document.getElementById("people").onclick = openPeopleModal
-
-document.getElementById("people_ok").onclick = closePeopleModal
+function twoCatModal(hand){
+	document.getElementById("twocat_cards").scrollPos=0;
+	addClassToAll(document.querySelector("body"), "darken", true, true, "twocat");
+	document.getElementById("twocat_ok").setAttribute("disabled", true)
+	for (let cardClass of hand) {
+		let backCard = document.querySelector(".Back.template").cloneNode(true);
+		backCard.classList.remove("hidden");
+		backCard.classList.remove("template");
+		backCard.classList.add("relative");
+		backCard.innerText="\0";
+		backCard.onclick = (e) => {
+			document.getElementById("twocat_ok").removeAttribute("disabled");
+			if(document.querySelector("card.Back.selected"))
+					document.querySelector("card.Back.selected").classList.remove("selected");
+			e.target.classList.add("selected");
+		}
+		backCard.setAttribute("originalCard",cardClass)
+		document.getElementById("twocat_cards").appendChild(backCard);
+	}
+	document.getElementById("twocat_modal").classList.remove("hidden");
+	let twocatCardPos=document.getElementById("twocat_cards").getBoundingClientRect();
+	calcElementWidth(document.getElementById("twocat_cards"), document.getElementById("twocat_scroll"));
+	document.getElementById("twocat_scroll").style.top=`-${window.innerHeight-twocatCardPos.height+15}px`;
+	reloadScrollbar("twocat_cards");
+}

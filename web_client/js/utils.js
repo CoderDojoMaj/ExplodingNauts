@@ -188,6 +188,14 @@ function populatePeopleModal(){
 	for(let player of playerList){
 		let playerLi = document.createElement("li");
 		playerLi.innerText = player;
+		playerLi.onclick = (e) => {
+			if(peopleModalReason == "C2Cat" || peopleModalReason == "C3Cat" || peopleModalReason == "Favor"){
+				if(document.querySelector("li.selected"))
+					document.querySelector("li.selected").classList.remove("selected");
+				e.target.classList.add("selected");
+				document.querySelector("#people_ok").removeAttribute("disabled")
+			}
+		}
 		document.getElementById("people_list").appendChild(playerLi);
 	}
 	for(let spectator of spectatorList){
@@ -196,6 +204,13 @@ function populatePeopleModal(){
 		spectatorLi.style.color = "#ccc";
 		spectatorLi.style.fontStyle = "italic";
 		spectatorLi.classList = "spectator";
+		spectatorLi.onclick = (e) => {
+			if(peopleModalReason == "C2Cat" || peopleModalReason == "C3Cat" || peopleModalReason == "Favor"){
+				if(document.querySelector("li.selected"))
+					document.querySelector("li.selected").classList.remove("selected");
+				e.target.classList.add("selected");
+			}
+		}
 		document.getElementById("people_list").appendChild(spectatorLi);
 	}
 }
@@ -225,3 +240,12 @@ function cardDragStart(e) {
 	e.target.id = "draggedCard";
 	e.dataTransfer.dropEffect = "move";
 };
+
+function getChildIndex(parent,child){
+	for(let i=0;i<parent.children.length;i++){
+		if(parent.children[i] == child){
+			return i;
+		}
+	}
+	return -1;
+}

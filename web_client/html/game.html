@@ -72,20 +72,33 @@
 
    <div id="people_modal" class="hidden">
       <div id="people_modal_content">
-         <h2>Players</h2>
-         <button id="leave">Leave Game</button>
+         <h2 id="people_title">Players</h2>
          <hr color="#f00">
          <ul id="people_list"></ul>
          <button id="people_ok">Ok</button>
       </div>
    </div>
 
+   <div id="twocat_modal" class="hidden">
+      <div id="twocat_cards">
+      </div>
+      <button id="twocat_ok">Ok</button>
+   </div>
+   <div id="twocat_scroll" class="scrollRect vis_hidden"></div>
+
+   <div id="threecat_modal" class="hidden">
+      <div id="threecat_cards">
+      </div>
+      <button id="threecat_ok">Ok</button>
+   </div>
+   <div id="threecat_scroll" class="scrollRect vis_hidden"></div>
+
    <script src="js/lib/jscookie.js"></script>
    <script src="js/gameVariables.js"></script>
    <script src="js/ws.js"></script>
    <script src="js/utils.js"></script>
-   <script src="js/game.js"></script>
    <script src="js/modals.js"></script>
+   <script src="js/game.js"></script>
 </body>
 
 </html>

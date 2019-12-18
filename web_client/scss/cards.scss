@@ -46,6 +46,11 @@ card {
     filter: brightness(70%);
   }
 
+  &.selected{
+    // border: 3px #0a0 solid;
+    filter: brightness(130%) contrast(70%);
+  }
+
   &.relative{
     position: relative;
   }
