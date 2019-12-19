@@ -137,3 +137,17 @@ document.querySelector("#twocat_ok").onclick = (e) => {
 	document.getElementById("twocat_modal").classList.add("hidden")
 	document.getElementById("twocat_cards").innerHTML = '';
 };
+
+document.querySelector("#threecat_ok").onclick = (e) => {
+	if (document.querySelector("#threecat_ok").hasAttribute("disabled")) {
+		e.preventDefault();
+		e.stopPropagation();
+		return false;
+	}
+	let cardIndex = -1;
+	let cardType = document.querySelector("card.selected").classList[0];
+	ws.send(`STEAL_CARD\0["${selectedPlayer}",${cardIndex},"${cardType}"]`);
+	removeClassFromAll(document.querySelector("body"), "darken", true, "threecat");
+	document.getElementById("threecat_modal").classList.add("hidden")
+	document.getElementById("threecat_cards").innerHTML = '';
+};

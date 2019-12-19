@@ -127,14 +127,23 @@ ws.onmessage = (data) => {
 			if(ansreason == "C2Cat") {
 				twoCatModal(anshand);
 			}else if(ansreason == "C3Cat") {
-				//Does not exist at the moment
-				//threeCatModal(anshand);
+				threeCatModal(anshand);
 			}
 			break;
 		case 'CARD_STOLEN':
 			let cardindex = parseInt(messageData);
 			hand.splice(cardindex,1)
 			document.querySelector(".hand").children[cardindex].remove();
+			break;
+		case 'CARD_STOLEN_IF_EXISTS':
+			let stolendata = JSON.parse(messageData);
+			let cardtype = stolendata[0];
+			let stolenBy = stolendata[1];
+			if(handContainsCard(cardtype)){
+				document.querySelector(".hand").children[getHandCardIndex(cardtype)].remove();
+				hand.splice(getHandCardIndex(cardtype),1)
+				ws.send(`STOLE_SUCCESFULLY\0["${cardtype}","${stolenBy}"]`)
+			}
 			break;
 		case 'CARD_GOTTEN':
 			let gottenCard = createCard(messageData);

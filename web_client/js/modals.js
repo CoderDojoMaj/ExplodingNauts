@@ -91,3 +91,27 @@ function twoCatModal(hand){
 	document.getElementById("twocat_scroll").style.top=`-${window.innerHeight-twocatCardPos.height+15}px`;
 	reloadScrollbar("twocat_cards");
 }
+
+function threeCatModal(hand){
+	document.getElementById("threecat_cards").scrollPos=0;
+	addClassToAll(document.querySelector("body"), "darken", true, true, "threecat");
+	document.getElementById("threecat_ok").setAttribute("disabled", true)
+	for (let cardClass of playableCards) {
+		let card = createCard(cardClass);
+		card.classList.remove("hidden");
+		card.classList.remove("template");
+		card.classList.add("relative");
+		card.onclick = (e) => {
+			document.getElementById("threecat_ok").removeAttribute("disabled");
+			if(document.querySelector("card.selected"))
+					document.querySelector("card.selected").classList.remove("selected");
+			e.target.classList.add("selected");
+		}
+		document.getElementById("threecat_cards").appendChild(card);
+	}
+	document.getElementById("threecat_modal").classList.remove("hidden");
+	let threecatCardPos=document.getElementById("threecat_cards").getBoundingClientRect();
+	calcElementWidth(document.getElementById("threecat_cards"), document.getElementById("threecat_scroll"));
+	document.getElementById("threecat_scroll").style.top=`-${window.innerHeight-threecatCardPos.height+15}px`;
+	reloadScrollbar("threecat_cards");
+}

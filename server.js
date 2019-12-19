@@ -208,10 +208,20 @@ websocketServer.on('connection', ws => {
                 let stealPlayerconn = connections[stealDataList[0]];
                 let cardIndex = stealDataList[1];
                 let cardType = stealDataList[2];
-                stealPlayerconn.send(`CARD_STOLEN\0${cardIndex}`)
-                connections[user].send(`CARD_GOTTEN\0${cardType}`);
+                if(cardIndex != -1){
+                    stealPlayerconn.send(`CARD_STOLEN\0${cardIndex}`)
+                    connections[user].send(`CARD_GOTTEN\0${cardType}`);
+                }else{
+                    stealPlayerconn.send(`CARD_STOLEN_IF_EXISTS\0["${cardType}","${user}"]`)
+                }
                 break;
-    }
+            case "STOLE_SUCCESFULLY":
+                let stolenDataList = JSON.parse(data);
+                let stolenPlayerconn = connections[stolenDataList[1]];
+                let stolencardType = stolenDataList[0];
+                stolenPlayerconn.send(`CARD_GOTTEN\0${stolencardType}`);
+                break;
+        }
     });
     ws.on('close', () => {
         if (user) {

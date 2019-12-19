@@ -47,8 +47,7 @@ card {
   }
 
   &.selected{
-    // border: 3px #0a0 solid;
-    filter: brightness(130%) contrast(70%);
+    filter: brightness(70%) contrast(130%);
   }
 
   &.relative{
