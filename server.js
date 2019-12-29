@@ -91,6 +91,7 @@ let connections = {}
 let players = {}
 let spectators = {}
 let deck = [];
+let discardPile = [];
 let turn = 0;
 let turnOrder = 1;
 let cardIds = {
@@ -148,9 +149,6 @@ websocketServer.on('connection', ws => {
                 break;
             case 'ADD_CARDS':
                 if(acceptConnections) acceptConnections = false;
-                for (let username in connections) {
-                    connections[username].send(`ADD_CARDS\0${data}`)
-                }
                 let cards = JSON.parse(data);
                 if(cards[0] == "SeeTheFuture" && cards.length == 1){
                     let list = [];
@@ -163,7 +161,12 @@ websocketServer.on('connection', ws => {
                 }else if(cards[0] == cards[1] && cards[1] == cards[2] && cards.length == 3 && cards[0].indexOf("Cat") != -1){
                     connections[user].send("COMBO\0C3Cat")
                 }else if([...new Set(cards)].length == 5 && cards.length == 5){
+                    connections[user].send(`DISCARD_PILE\0${JSON.stringify(discardPile)}`)
                     connections[user].send("COMBO\0C5Cards")
+                }
+                discardPile = discardPile.concat(cards)
+                for (let username in connections) {
+                    connections[username].send(`ADD_CARDS\0${data}`)
                 }
                 break;
             case 'DRAW_CARD':
@@ -205,14 +208,19 @@ websocketServer.on('connection', ws => {
                 break;
             case "STEAL_CARD":
                 let stealDataList = JSON.parse(data);
-                let stealPlayerconn = connections[stealDataList[0]];
                 let cardIndex = stealDataList[1];
                 let cardType = stealDataList[2];
-                if(cardIndex != -1){
-                    stealPlayerconn.send(`CARD_STOLEN\0${cardIndex}`)
+                if(stealDataList[0] == "discardPile"){
+                    discardPile.splice(cardIndex,1)
                     connections[user].send(`CARD_GOTTEN\0${cardType}`);
                 }else{
-                    stealPlayerconn.send(`CARD_STOLEN_IF_EXISTS\0["${cardType}","${user}"]`)
+                    let stealPlayerconn = connections[stealDataList[0]];
+                    if(cardIndex != -1){
+                        stealPlayerconn.send(`CARD_STOLEN\0${cardIndex}`)
+                        connections[user].send(`CARD_GOTTEN\0${cardType}`);
+                    }else{
+                        stealPlayerconn.send(`CARD_STOLEN_IF_EXISTS\0["${cardType}","${user}"]`)
+                    }
                 }
                 break;
             case "STOLE_SUCCESFULLY":
@@ -220,6 +228,9 @@ websocketServer.on('connection', ws => {
                 let stolenPlayerconn = connections[stolenDataList[1]];
                 let stolencardType = stolenDataList[0];
                 stolenPlayerconn.send(`CARD_GOTTEN\0${stolencardType}`);
+                break;
+            case "SET_DISCARD_PILE":
+                discardPile=JSON.parse(data);
                 break;
         }
     });

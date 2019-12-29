@@ -115,3 +115,27 @@ function threeCatModal(hand){
 	document.getElementById("threecat_scroll").style.top=`-${window.innerHeight-threecatCardPos.height+15}px`;
 	reloadScrollbar("threecat_cards");
 }
+
+function fiveCatModal(){
+	document.getElementById("fivecat_cards").scrollPos=0;
+	addClassToAll(document.querySelector("body"), "darken", true, true, "fivecat");
+	document.getElementById("fivecat_ok").setAttribute("disabled", true)
+	for (let cardClass of localDiscardPile) {
+		let card = createCard(cardClass);
+		card.classList.remove("hidden");
+		card.classList.remove("template");
+		card.classList.add("relative");
+		card.onclick = (e) => {
+			document.getElementById("fivecat_ok").removeAttribute("disabled");
+			if(document.querySelector("card.selected"))
+					document.querySelector("card.selected").classList.remove("selected");
+			e.target.classList.add("selected");
+		}
+		document.getElementById("fivecat_cards").appendChild(card);
+	}
+	document.getElementById("fivecat_modal").classList.remove("hidden");
+	let fivecatCardPos=document.getElementById("fivecat_cards").getBoundingClientRect();
+	calcElementWidth(document.getElementById("fivecat_cards"), document.getElementById("fivecat_scroll"));
+	document.getElementById("fivecat_scroll").style.top=`-${window.innerHeight-fivecatCardPos.height+15}px`;
+	reloadScrollbar("fivecat_cards");
+}

@@ -11,6 +11,7 @@ var cardsInStack = [];
 var cardsInStackHand = [];
 var cardZIndex = 3;
 var localDeck = [];
+var localDiscardPile = [];
 
 var handScrollPos = 0, maxHandScrollPos = 0, handWidth = 0;
 

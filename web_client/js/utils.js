@@ -249,3 +249,15 @@ function getChildIndex(parent,child){
 	}
 	return -1;
 }
+
+function redrawDiscardPile(newPile){
+	let pile = document.querySelector(".discardPile");
+	pile.innerHTML = "";
+	for(let cardNum of newPile){
+		let card = createCard(cardTypes[cardNum]);
+		card.classList.remove("template");
+		card.classList.remove("hidden");
+		card.style.transform = "rotate("+(Math.random()-0.5)*45+"deg)";
+		document.querySelector(".discardPile").appendChild(card);
+	}
+}

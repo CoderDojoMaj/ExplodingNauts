@@ -19,7 +19,6 @@ ws.onmessage = (data) => {
 				addedCard.style.transform = "rotate("+(Math.random()-0.5)*45+"deg)";
 				document.querySelector(".discardPile").appendChild(addedCard);
 			}
-			cardsInStack = cardsInStack.concat(cardArr)
 			break;
 		case 'USER_LIST':
 			playerList=JSON.parse(messageData)
@@ -82,6 +81,9 @@ ws.onmessage = (data) => {
 		case "ACTUAL_DECK":
 			localDeck = JSON.parse(messageData);
 			break;
+		case "DISCARD_PILE":
+			localDiscardPile = JSON.parse(messageData);
+			break;
 		case 'ACTIVATE':
 			enableHand();
 			document.querySelector(".deck").removeAttribute("disabled")
@@ -106,7 +108,7 @@ ws.onmessage = (data) => {
 			}else if(messageData == "C3Cat") {
 				openPeopleModal("C3Cat");
 			}else if(messageData == "C5Cards") {
-				//Make 5 cards work
+				fiveCatModal();
 			}
 			break;
 		case 'HAND_REQUEST':
@@ -122,7 +124,6 @@ ws.onmessage = (data) => {
 		case 'ANS_HAND_REQUEST':
 			let ansdataList = JSON.parse(messageData);
 			let anshand = ansdataList[0];
-			console.log(anshand)
 			let ansreason = ansdataList[1];
 			if(ansreason == "C2Cat") {
 				twoCatModal(anshand);

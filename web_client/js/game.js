@@ -49,6 +49,7 @@ document.querySelector("#hand").onwheel = scrollableElement;
 document.querySelector("#defused_cards").onwheel = scrollableElement;
 document.querySelector("#twocat_cards").onwheel = scrollableElement;
 document.querySelector("#threecat_cards").onwheel = scrollableElement;
+document.querySelector("#fivecat_cards").onwheel = scrollableElement;
 
 document.querySelector(".discardPile").ondragover = (e) => {
     e.preventDefault();
@@ -150,4 +151,18 @@ document.querySelector("#threecat_ok").onclick = (e) => {
 	removeClassFromAll(document.querySelector("body"), "darken", true, "threecat");
 	document.getElementById("threecat_modal").classList.add("hidden")
 	document.getElementById("threecat_cards").innerHTML = '';
+};
+
+document.querySelector("#fivecat_ok").onclick = (e) => {
+	if (document.querySelector("#fivecat_ok").hasAttribute("disabled")) {
+		e.preventDefault();
+		e.stopPropagation();
+		return false;
+	}
+	let cardIndex = -1;
+	let cardType = document.querySelector("card.selected").classList[0];
+	ws.send(`STEAL_CARD\0["discardPile",${cardIndex},"${cardType}"]`);
+	removeClassFromAll(document.querySelector("body"), "darken", true, "fivecat");
+	document.getElementById("fivecat_modal").classList.add("hidden")
+	document.getElementById("fivecat_cards").innerHTML = '';
 };
