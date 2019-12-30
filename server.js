@@ -158,7 +158,7 @@ websocketServer.on('connection', ws => {
                     }
                     connections[user].send(`ANS_SEETHEFUTURE\0${JSON.stringify(list)}`)
                 }else if(cards[0] == "TargetedAttack" && cards.length == 1){
-                    connections[user].send(`ANS_ATTACK\0 `)
+                    // Complete when implementing Targeted Attack
                 }else if(cards[0] == "Attack" && cards.length == 1){
                     if(attackAmount > 0){
                         attackAmount+=2;
@@ -166,6 +166,12 @@ websocketServer.on('connection', ws => {
                         attackAmount+=1;
                     }
                     passTurn();
+                }else if(cards[0] == "Skip" && cards.length == 1){
+                    if(attackAmount==0){
+                        passTurn();
+                    }else{
+                        attackAmount--;
+                    }
                 }else if(cards[0] == cards[1] && cards.length == 2 && cards[0].indexOf("Cat") != -1){
                     connections[user].send("COMBO\0C2Cat")
                 }else if(cards[0] == cards[1] && cards[1] == cards[2] && cards.length == 3 && cards[0].indexOf("Cat") != -1){

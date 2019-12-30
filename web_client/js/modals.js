@@ -1,5 +1,6 @@
 function closePeopleModal(){
-	selectedPlayer = document.querySelector("li.selected").innerText;
+	if(document.querySelector("li.selected"))
+		selectedPlayer = document.querySelector("li.selected").innerText;
 	if(peopleModalReason == "C2Cat"){
 		ws.send(`GET_HAND\0["${selectedPlayer}","C2Cat"]`)
 	}else if(peopleModalReason == "C3Cat"){
