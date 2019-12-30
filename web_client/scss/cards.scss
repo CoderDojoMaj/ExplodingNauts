@@ -60,7 +60,7 @@ card {
     color: white;
   }
 
-  &.Attack {
+  &.Attack, &.TargetedAttack {
     @include color($attack-card-color);
   }
 

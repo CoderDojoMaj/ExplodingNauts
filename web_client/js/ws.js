@@ -162,6 +162,8 @@ ws.onmessage = (data) => {
 			hand.push(gottenCard)
 			reloadScrollbar("hand");
 			break;
+		case 'ANS_ATTACK':
+			openPeopleModal("Attack");yu6	
 	}
 }
 

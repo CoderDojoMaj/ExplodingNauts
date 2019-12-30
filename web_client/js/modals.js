@@ -6,6 +6,8 @@ function closePeopleModal(){
 		ws.send(`GET_HAND\0["${selectedPlayer}","C3Cat"]`)
 	}else if(peopleModalReason == "Favor"){
 		//TODO: Make favor work
+	}else if(peopleModalReason == "TargetedAttack"){
+		ws.send(`SKIP_TO\0${selectedPlayer}`)
 	}
 
 	if(document.querySelector("li.selected"))
@@ -16,7 +18,7 @@ function closePeopleModal(){
 }
 
 function openPeopleModal(reason){
-	if(reason == "C2Cat" || reason == "C3Cat" || reason == "Favor"){
+	if(reason == "C2Cat" || reason == "C3Cat" || reason == "Favor" || reason == "Attack"){
 		document.querySelector("#people_title").innerText = "Choose a Player";
 		document.querySelector("#people_ok").setAttribute("disabled", true)
 	}else{

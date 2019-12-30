@@ -93,6 +93,7 @@ let spectators = {}
 let deck = [];
 let discardPile = [];
 let turn = 0;
+let attackAmount = 0;
 let turnOrder = 1;
 let cardIds = {
     explodingKitten: 0,
@@ -156,6 +157,15 @@ websocketServer.on('connection', ws => {
                         list.push(deck[i])
                     }
                     connections[user].send(`ANS_SEETHEFUTURE\0${JSON.stringify(list)}`)
+                }else if(cards[0] == "TargetedAttack" && cards.length == 1){
+                    connections[user].send(`ANS_ATTACK\0 `)
+                }else if(cards[0] == "Attack" && cards.length == 1){
+                    if(attackAmount > 0){
+                        attackAmount+=2;
+                    }else{
+                        attackAmount+=1;
+                    }
+                    passTurn();
                 }else if(cards[0] == cards[1] && cards.length == 2 && cards[0].indexOf("Cat") != -1){
                     connections[user].send("COMBO\0C2Cat")
                 }else if(cards[0] == cards[1] && cards[1] == cards[2] && cards.length == 3 && cards[0].indexOf("Cat") != -1){
@@ -172,19 +182,10 @@ websocketServer.on('connection', ws => {
             case 'DRAW_CARD':
                 if (acceptConnections) acceptConnections = false;
                 connections[user].send(`DRAW_CARD\0${deck.shift()}`)
-                turn+=turnOrder;
-                let tmpturn = turn;
-                playerNames = Object.keys(players);
-                if (turn<0){
-                    tmpturn = playerNames.length+turn;
-                }
-                console.log(turn,playerNames,"TURN TO:",playerNames[tmpturn%Object.values(players).length])
-                for(let player of Object.values(players)){
-                    if(players[playerNames[tmpturn%Object.values(players).length]] == player){
-                        player.send(`ACTIVATE\0 `)
-                    }else{
-                        player.send(`DEACTIVATE\0 `)
-                    }
+                if(attackAmount==0){
+                    passTurn();
+                }else{
+                    attackAmount--;
                 }
                 break;
             case "GET_DECK":
@@ -231,6 +232,16 @@ websocketServer.on('connection', ws => {
                 break;
             case "SET_DISCARD_PILE":
                 discardPile=JSON.parse(data);
+                break;
+            case "SKIP_TO":
+                // Fill when implementing Targeted Attack
+                break;
+            case "SKIP":
+                if(attackAmount==0){
+                    passTurn();
+                }else{
+                    attackAmount--;
+                }
                 break;
         }
     });
@@ -296,6 +307,23 @@ function generateDeck(players = 5) {
         let index=Math.floor(Math.random()*cards.length);
         deck.push(cards[index])
         cards.splice(index,1)
+    }
+}
+
+function passTurn(){
+    turn+=turnOrder;
+    let tmpturn = turn;
+    playerNames = Object.keys(players);
+    if (turn<0){
+        tmpturn = playerNames.length+turn;
+    }
+    console.log(turn,playerNames,"TURN TO:",playerNames[tmpturn%Object.values(players).length])
+    for(let player of Object.values(players)){
+        if(players[playerNames[tmpturn%Object.values(players).length]] == player){
+            player.send(`ACTIVATE\0 `)
+        }else{
+            player.send(`DEACTIVATE\0 `)
+        }
     }
 }
 
