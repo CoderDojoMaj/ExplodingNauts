@@ -168,6 +168,9 @@ ws.onmessage = (data) => {
 		case 'ANS_FAVOR':
 			openPeopleModal("Favor");
 			break;
+		case 'ANS_TARGETED_ATTACK':
+			openPeopleModal("TargetedAttack");
+			break;
 	}
 }
 

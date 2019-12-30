@@ -108,7 +108,8 @@ let cardIds = {
     hairyPotatoCat: 9,
     tacoCat: 10,
     beardCat: 11,
-    cattermelon: 12
+    cattermelon: 12,
+    targetedAttack: 13
 };
 let acceptConnections = true;
 
@@ -158,7 +159,7 @@ websocketServer.on('connection', ws => {
                     }
                     connections[user].send(`ANS_SEETHEFUTURE\0${JSON.stringify(list)}`)
                 }else if(cards[0] == "TargetedAttack" && cards.length == 1){
-                    // Complete when implementing Targeted Attack
+                    ws.send(`ANS_TARGETED_ATTACK\0 `)
                 }else if(cards[0] == "Attack" && cards.length == 1){
                     if(attackAmount > 0){
                         attackAmount+=2;
@@ -242,7 +243,22 @@ websocketServer.on('connection', ws => {
                 discardPile=JSON.parse(data);
                 break;
             case "SKIP_TO":
-                // Fill when implementing Targeted Attack
+                let playerNames = Object.keys(players);
+                turn = Object.keys(connections).indexOf(data);
+                for(let player of Object.values(players)){
+                    if(players[playerNames[turn%Object.values(players).length]] == player){
+                        player.send(`ACTIVATE\0 `)
+                    }else{
+                        player.send(`DEACTIVATE\0 `)
+                    }
+                }
+                break;
+            case "ATTACK_CURRENT":
+                if(attackAmount > 0){
+                    attackAmount+=2;
+                }else{
+                    attackAmount+=1;
+                }
                 break;
             case "SKIP":
                 if(attackAmount==0){
@@ -318,6 +334,9 @@ function generateDeck(players = 5) {
     for (let i = 0; i < 4; i++) {
         cards.push(cardIds.cattermelon)
     }
+    for (let i = 0; i < 4; i++) {
+        cards.push(cardIds.targetedAttack)
+    }
     
     // Shuffle deck
     let numberOfCards = cards.length;
@@ -331,7 +350,7 @@ function generateDeck(players = 5) {
 function passTurn(){
     turn+=turnOrder;
     let tmpturn = turn;
-    playerNames = Object.keys(players);
+    let playerNames = Object.keys(players);
     if (turn<0){
         tmpturn = playerNames.length+turn;
     }

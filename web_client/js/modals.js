@@ -9,6 +9,7 @@ function closePeopleModal(){
 		ws.send(`ASK_FAVOR\0${selectedPlayer}`)
 	}else if(peopleModalReason == "TargetedAttack"){
 		ws.send(`SKIP_TO\0${selectedPlayer}`)
+		ws.send(`ATTACK_CURRENT\0 `)
 	}
 
 	if(document.querySelector("li.selected"))
@@ -19,7 +20,7 @@ function closePeopleModal(){
 }
 
 function openPeopleModal(reason){
-	if(reason == "C2Cat" || reason == "C3Cat" || reason == "Favor" || reason == "Attack"){
+	if(reason == "C2Cat" || reason == "C3Cat" || reason == "Favor" || reason == "TargetedAttack"){
 		document.querySelector("#people_title").innerText = "Choose a Player";
 		document.querySelector("#people_ok").setAttribute("disabled", true)
 	}else{

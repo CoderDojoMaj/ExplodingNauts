@@ -189,7 +189,7 @@ function populatePeopleModal(){
 		let playerLi = document.createElement("li");
 		playerLi.innerText = player;
 		playerLi.onclick = (e) => {
-			if(peopleModalReason == "C2Cat" || peopleModalReason == "C3Cat" || peopleModalReason == "Favor"){
+			if(peopleModalReason == "C2Cat" || peopleModalReason == "C3Cat" || peopleModalReason == "Favor" || peopleModalReason == "TargetedAttack"){
 				if(document.querySelector("li.selected"))
 					document.querySelector("li.selected").classList.remove("selected");
 				e.target.classList.add("selected");
