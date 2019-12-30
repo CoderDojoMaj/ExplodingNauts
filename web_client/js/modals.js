@@ -6,7 +6,7 @@ function closePeopleModal(){
 	}else if(peopleModalReason == "C3Cat"){
 		ws.send(`GET_HAND\0["${selectedPlayer}","C3Cat"]`)
 	}else if(peopleModalReason == "Favor"){
-		//TODO: Make favor work
+		ws.send(`ASK_FAVOR\0${selectedPlayer}`)
 	}else if(peopleModalReason == "TargetedAttack"){
 		ws.send(`SKIP_TO\0${selectedPlayer}`)
 	}
@@ -95,7 +95,7 @@ function twoCatModal(hand){
 	reloadScrollbar("twocat_cards");
 }
 
-function threeCatModal(hand){
+function threeCatModal(){
 	document.getElementById("threecat_cards").scrollPos=0;
 	addClassToAll(document.querySelector("body"), "darken", true, true, "threecat");
 	document.getElementById("threecat_ok").setAttribute("disabled", true)
@@ -141,4 +141,31 @@ function fiveCatModal(){
 	calcElementWidth(document.getElementById("fivecat_cards"), document.getElementById("fivecat_scroll"));
 	document.getElementById("fivecat_scroll").style.top=`-${window.innerHeight-fivecatCardPos.height+15}px`;
 	reloadScrollbar("fivecat_cards");
+}
+
+function favorModal(player){
+	document.getElementById("favor_ok").player = player;
+	document.getElementById("favor_cards").scrollPos=0;
+	addClassToAll(document.querySelector("body"), "darken", true, true, "favor");
+	document.getElementById("favor_ok").setAttribute("disabled", true)
+	for (let cardClass of playableCards) {
+		if(getHandCardIndex(cardClass) != -1){
+			let card = createCard(cardClass);
+			card.classList.remove("hidden");
+			card.classList.remove("template");
+			card.classList.add("relative");
+			card.onclick = (e) => {
+				document.getElementById("favor_ok").removeAttribute("disabled");
+				if(document.querySelector("card.selected"))
+						document.querySelector("card.selected").classList.remove("selected");
+				e.target.classList.add("selected");
+			}
+			document.getElementById("favor_cards").appendChild(card);
+		}
+	}
+	document.getElementById("favor_modal").classList.remove("hidden");
+	let favorCardPos=document.getElementById("favor_cards").getBoundingClientRect();
+	calcElementWidth(document.getElementById("favor_cards"), document.getElementById("favor_scroll"));
+	document.getElementById("favor_scroll").style.top=`-${window.innerHeight-favorCardPos.height+15}px`;
+	reloadScrollbar("favor_cards");
 }

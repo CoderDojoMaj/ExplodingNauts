@@ -50,6 +50,7 @@ document.querySelector("#defused_cards").onwheel = scrollableElement;
 document.querySelector("#twocat_cards").onwheel = scrollableElement;
 document.querySelector("#threecat_cards").onwheel = scrollableElement;
 document.querySelector("#fivecat_cards").onwheel = scrollableElement;
+document.querySelector("#favor_cards").onwheel = scrollableElement;
 
 document.querySelector(".discardPile").ondragover = (e) => {
     e.preventDefault();
@@ -119,6 +120,10 @@ document.querySelector("#defused_ok").onclick = (e) => {
 	hand.splice(getHandCardIndex("Defuse"),1);
 	reloadScrollbar("hand")
 	ws.send(`ADD_CARDS\0["Defuse"]`);
+	// Deactivate player
+	disableCardsInHand(["Nope"]);
+	document.querySelector(".deck").setAttribute("disabled", true)
+	document.querySelector("#putMultiple").setAttribute("disabled", true)
 };
 
 document.getElementById("people").onclick = openPeopleModal;
@@ -165,4 +170,25 @@ document.querySelector("#fivecat_ok").onclick = (e) => {
 	removeClassFromAll(document.querySelector("body"), "darken", true, "fivecat");
 	document.getElementById("fivecat_modal").classList.add("hidden")
 	document.getElementById("fivecat_cards").innerHTML = '';
+};
+
+document.querySelector("#favor_ok").onclick = (e) => {
+	if (document.querySelector("#favor_ok").hasAttribute("disabled")) {
+		e.preventDefault();
+		e.stopPropagation();
+		return false;
+	}
+	let cardType = document.querySelector("card.selected").classList[0];
+	let playerToSend = document.querySelector("#favor_ok").player;
+	
+	let cardindex = getHandCardIndex(cardType);
+	if(cardindex != -1){
+		hand.splice(cardindex,1)
+		document.querySelector(".hand").children[cardindex].remove();
+
+		ws.send(`SEND_FAVOR\0["${playerToSend}","${cardType}"]`);
+	}
+	removeClassFromAll(document.querySelector("body"), "darken", true, "favor");
+	document.getElementById("favor_modal").classList.add("hidden")
+	document.getElementById("favor_cards").innerHTML = '';
 };

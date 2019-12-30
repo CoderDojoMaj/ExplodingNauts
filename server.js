@@ -172,6 +172,8 @@ websocketServer.on('connection', ws => {
                     }else{
                         attackAmount--;
                     }
+                }else if(cards[0] == "Favor" && cards.length == 1){
+                    connections[user].send("ANS_FAVOR\0 ")
                 }else if(cards[0] == cards[1] && cards.length == 2 && cards[0].indexOf("Cat") != -1){
                     connections[user].send("COMBO\0C2Cat")
                 }else if(cards[0] == cards[1] && cards[1] == cards[2] && cards.length == 3 && cards[0].indexOf("Cat") != -1){
@@ -248,6 +250,16 @@ websocketServer.on('connection', ws => {
                 }else{
                     attackAmount--;
                 }
+                break;
+            case "ASK_FAVOR":
+                let askedPlayer = connections[data];
+                askedPlayer.send(`FAVOR_ASKED\0${user}`)
+                break;
+            case "SEND_FAVOR":
+                let favorDataList = JSON.parse(data);
+                let favorPlayerconn = connections[favorDataList[0]];
+                let favorcardType = favorDataList[1];
+                favorPlayerconn.send(`CARD_GOTTEN\0${favorcardType}`);
                 break;
         }
     });

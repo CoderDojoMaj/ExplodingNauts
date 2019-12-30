@@ -162,8 +162,12 @@ ws.onmessage = (data) => {
 			hand.push(gottenCard)
 			reloadScrollbar("hand");
 			break;
-		case 'ANS_ATTACK':
-			openPeopleModal("Attack");yu6	
+		case 'FAVOR_ASKED':
+			favorModal(messageData)
+			break;
+		case 'ANS_FAVOR':
+			openPeopleModal("Favor");
+			break;
 	}
 }
 
