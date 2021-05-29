@@ -9,7 +9,7 @@
     "express": "^4.16.4",
     "nodemon": "^1.19.1",
     "sass": "^1.22.5",
-    "ws": "^7.1.0"
+    "ws": "^7.4.6"
   },
   "scripts": {
     "start": "npm run build-css && node server.js",
